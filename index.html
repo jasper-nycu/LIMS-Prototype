@@ -69,24 +69,25 @@
         <div class="relative">
           <button id="bell-btn" class="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors focus:outline-none">
             <span class="material-symbols-outlined">notifications</span>
-            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            <span id="notif-badge" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
           </button>
-          <div id="notif-panel" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 transform origin-top-right transition-all">
-            <h3 class="text-sm font-bold text-slate-800 mb-3 px-1" data-i18n="sys_notif">System Notifications</h3>
-            <div class="space-y-2">
-              <div class="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-emerald-500 text-sm mt-0.5">check_circle</span>
-                <div>
-                  <p class="text-xs font-bold text-slate-800" data-i18n="notif_order_done">Order REQ-B110 Completed</p>
-                  <p class="text-[10px] text-slate-500" data-i18n="notif_wafers_ready">Wafers ready for collection.</p>
+          <div id="notif-panel" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 transform origin-top-right transition-all shadow-lg">
+            <div class="flex justify-between items-center mb-3 px-1">
+              <h3 class="text-sm font-bold text-slate-800" data-i18n="sys_notif">System Notifications</h3>
+              <span id="notif-count-text" class="hidden text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full shadow-sm">0 New</span>
+            </div>
+            <div id="notif-list" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+              <div class="p-3 bg-slate-50/50 rounded-xl border border-slate-100 flex justify-between items-start relative group transition-all">
+                <div class="flex gap-3">
+                  <span class="material-symbols-outlined text-slate-400 text-sm mt-0.5">history</span>
+                  <div>
+                    <p class="text-xs font-bold text-slate-600">System initialized.</p>
+                    <p class="text-[10px] text-slate-400">All services are running normally.</p>
+                  </div>
                 </div>
-              </div>
-              <div class="p-3 bg-red-50/50 rounded-xl border border-red-100 flex gap-3 items-start">
-                <span class="material-symbols-outlined text-red-500 text-sm mt-0.5">warning</span>
-                <div>
-                  <p class="text-xs font-bold text-red-800" data-i18n="notif_alert">Alert: TEM-01 Vacuum Fault</p>
-                  <p class="text-[10px] text-red-600" data-i18n="notif_maint">Immediate maintenance required.</p>
-                </div>
+                <button onclick="removeNotification(this)" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity">
+                  <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
               </div>
             </div>
           </div>
@@ -150,19 +151,17 @@
 
             <div class="space-y-2">
               <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="select_exp">Select Experiment Items</label>
-              <div id="experimentContainer" class="flex flex-wrap gap-3">
-                </div>
+              <div id="experimentContainer" class="flex flex-wrap gap-3"></div>
             </div>
 
-            <div class="space-y-2 p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="space-y-2 p-4 bg-slate-50 rounded-xl border border-slate-200 relative">
               <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="iterative_wafer">Iterative Wafer ID Input</label>
               <div class="flex gap-2">
-                <input type="text" id="waferInput" class="flex-1 rounded-xl border-slate-300 focus:ring-corporate-blue" placeholder="Scan or enter Wafer ID (e.g. W-1049)">
+                <input type="text" id="waferInput" class="flex-1 rounded-xl border-slate-300 focus:ring-corporate-blue transition-colors" placeholder="Scan or enter Wafer ID (e.g. W-1049)">
                 <button type="button" onclick="addWafer()" class="px-4 bg-white border border-slate-300 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors" data-i18n="add_wafer_btn">Add Wafer</button>
               </div>
-              <div id="waferContainer" class="flex flex-wrap gap-2 mt-3">
-                <span class="bg-blue-100 text-corporate-blue px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1">W-8821 <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="this.parentElement.remove()">close</span></span>
-              </div>
+              <p id="waferErrorMsg" class="hidden text-xs text-red-500 font-bold mt-1" data-i18n="wafer_format_err">Invalid format. Must be W-XXXX (e.g., W-1049).</p>
+              <div id="waferContainer" class="flex flex-wrap gap-2 mt-3"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -177,7 +176,7 @@
             </div>
             <div class="space-y-2">
               <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="order_remarks">Order Remarks</label>
-              <textarea class="w-full rounded-xl border-slate-200 focus:ring-corporate-blue focus:border-corporate-blue" rows="3" placeholder="Enter any special instructions..."></textarea>
+              <textarea id="orderRemarks" class="w-full rounded-xl border-slate-200 focus:ring-corporate-blue focus:border-corporate-blue" rows="3" placeholder="Enter any special instructions..."></textarea>
             </div>
 
             <button type="button" onclick="submitRequest()" class="w-full bg-corporate-blue text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all flex justify-center gap-2">
@@ -186,7 +185,7 @@
           </form>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-8">
           <div class="px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="my_req_prog">My Requests Progress</h2></div>
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-slate-500 uppercase text-[10px]">
@@ -197,12 +196,12 @@
                 <th class="px-6 py-3 text-right" data-i18n="tbl_status">Status</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-50" id="my-requests-body">
               <tr>
-                <td class="px-6 py-4 font-mono">REQ-C991</td>
-                <td class="px-6 py-4"><span data-i18n="exp_bake">High-Temp Bake</span>, <span data-i18n="exp_etest">Electrical Test</span></td>
+                <td class="px-6 py-4 font-mono font-bold">REQ-C991</td>
+                <td class="px-6 py-4 text-xs text-slate-600"><span data-i18n="exp_bake">High-Temp Bake</span>, <span data-i18n="exp_etest">Electrical Test</span></td>
                 <td class="px-6 py-4">2</td>
-                <td class="px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-xs font-bold" data-i18n="status_pending">PENDING</span></td>
+                <td class="px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
               </tr>
             </tbody>
           </table>
@@ -211,28 +210,31 @@
 
       <section class="view-content space-y-8" id="view-lab-operations">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
           <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
             <div class="px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="wip_sorting">Pending Wafers for Sorting (WIP)</h2></div>
-            <div class="overflow-x-auto flex-1">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-500 uppercase text-[10px]">
-                  <tr><th class="px-6 py-3 w-10"><input type="checkbox" class="rounded text-corporate-blue"></th>
-                  <th class="px-6 py-3" data-i18n="tbl_wafer_id">Wafer ID</th>
-                  <th class="px-6 py-3" data-i18n="tbl_req_exp">Required Exp.</th>
-                  <th class="px-6 py-3" data-i18n="priority">Priority</th></tr>
+            <div class="overflow-x-auto overflow-y-auto max-h-[300px] flex-1 custom-scrollbar relative">
+              <table class="w-full text-left text-sm relative">
+                <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] sticky top-0 z-10 shadow-sm">
+                  <tr>
+                    <th class="px-6 py-3 w-10"><input type="checkbox" id="selectAllWip" class="rounded text-corporate-blue focus:ring-corporate-blue"></th>
+                    <th class="px-6 py-3" data-i18n="tbl_wafer_id">Wafer ID</th>
+                    <th class="px-6 py-3" data-i18n="tbl_req_exp">Required Exp.</th>
+                    <th class="px-6 py-3" data-i18n="priority">Priority</th>
+                  </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
-                  <tr class="hover:bg-slate-50">
-                    <td class="px-6 py-4"><input type="checkbox" class="rounded text-corporate-blue"></td>
+                <tbody class="divide-y divide-slate-50" id="wip-queue-body">
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
                     <td class="px-6 py-4 font-mono font-bold">W-8821</td>
                     <td class="px-6 py-4 text-xs text-slate-500" data-i18n="exp_bake">High-Temp Bake</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-red-50 text-red-600 rounded text-[10px] font-bold" data-i18n="pri_urgent">URGENT</span></td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_urgent">Urgent</span></td>
                   </tr>
-                  <tr class="hover:bg-slate-50">
-                    <td class="px-6 py-4"><input type="checkbox" class="rounded text-corporate-blue"></td>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
                     <td class="px-6 py-4 font-mono font-bold">W-9005</td>
                     <td class="px-6 py-4 text-xs text-slate-500" data-i18n="exp_etest">Electrical Test</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold" data-i18n="pri_normal">NORMAL</span></td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_normal">Normal</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -244,18 +246,32 @@
             <div class="space-y-4">
               <div class="space-y-1">
                 <label class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="sel_wips">Selected WIPs</label>
-                <div class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm font-mono text-corporate-blue" data-i18n="wips_placeholder">2 Wafers Selected</div>
+                <div id="selected-wip-count" class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-sm font-mono text-corporate-blue">0 Wafers Selected</div>
               </div>
               <div class="space-y-1">
                 <label class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="target_mach">Target Machine</label>
-                <select class="w-full rounded-xl border-slate-200 text-sm"><option>BAKE-OVEN-01 (Idle)</option><option disabled>E-TEST-02 (Processing)</option></select>
+                <select class="w-full rounded-xl border-slate-200 text-sm text-slate-700">
+                  <option disabled>SEM-01 (Processing)</option>
+                  <option selected>BAKE-OVEN-01 (Idle)</option>
+                  <option disabled>TEM-01 (Alarm)</option>
+                  <option>FIB-01 (Idle)</option>
+                  <option disabled>E-TEST-02 (Processing)</option>
+                  <option>XRD-01 (Idle)</option>
+                </select>
               </div>
               <div class="space-y-1">
                 <label class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="recipe">Recipe</label>
-                <select class="w-full rounded-xl border-slate-200 text-sm"><option>Bake-150C-4H</option></select>
+                <select class="w-full rounded-xl border-slate-200 text-sm text-slate-700">
+                  <option>Bake-150C-4H</option>
+                  <option>Bake-250C-2H</option>
+                  <option>SEM-Surface-Std</option>
+                  <option>FIB-Cross-Section</option>
+                  <option>XRD-Crystal-Scan</option>
+                  <option>E-TEST-Parametric</option>
+                </select>
               </div>
             </div>
-            <button class="mt-6 w-full bg-corporate-blue text-white py-3 rounded-xl font-bold flex justify-center gap-2 hover:bg-blue-700">
+            <button onclick="executeDispatch()" class="mt-6 w-full bg-corporate-blue text-white py-3 rounded-xl font-bold flex justify-center gap-2 hover:bg-blue-700 shadow-sm transition-colors">
               <span class="material-symbols-outlined">bolt</span> <span data-i18n="exec_dispatch">Execute Dispatch</span>
             </button>
           </div>
@@ -316,6 +332,60 @@
                 </div>
               </div>
             </div>
+            
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="font-bold text-lg">FIB-01</h3>
+                  <p class="text-xs text-slate-400">Cap: 1 Wafer</p>
+                </div>
+                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded" data-i18n="fsm_idle">IDLE</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_fib">Focused Ion Beam (FIB)</span></div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div class="flex -space-x-2">
+                  <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-bold border border-white">CH</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] opacity-80 pointer-events-none relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse"></div>
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="font-bold text-lg">E-TEST-02</h3>
+                  <p class="text-xs text-slate-400">Cap: 50 Wafers</p>
+                </div>
+                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded" data-i18n="fsm_proc">PROCESSING</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_etest">Electrical Test</span></div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div class="flex -space-x-2">
+                  <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold border border-white">AS</div>
+                  <div class="w-6 h-6 rounded-full bg-corporate-blue text-white flex items-center justify-center text-[10px] font-bold border border-white">JL</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="font-bold text-lg">XRD-01</h3>
+                  <p class="text-xs text-slate-400">Cap: 25 Wafers</p>
+                </div>
+                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded" data-i18n="fsm_idle">IDLE</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_xrd">X-Ray Diffraction</span></div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div class="flex -space-x-2">
+                  <div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold border border-white">MW</div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -326,7 +396,10 @@
           <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
             <div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
               <h2 class="font-bold text-lg text-slate-900" data-i18n="mgr_approval">Approval Queue (Capacity Check Required)</h2>
-              <span class="px-3 py-1 bg-corporate-blue/10 text-corporate-blue text-xs font-bold rounded-full uppercase">1 Pending</span>
+              <span class="px-3 py-1 bg-corporate-blue/10 text-corporate-blue text-xs font-bold rounded-full uppercase flex items-center gap-1">
+                <span id="pending-number">1</span> 
+                <span data-i18n="lbl_pending">PENDING</span>
+              </span>
             </div>
             <div class="overflow-x-auto flex-1">
               <table class="w-full text-left text-sm">
@@ -335,27 +408,28 @@
                     <th class="px-6 py-3" data-i18n="tbl_reqster">Requester</th>
                     <th class="px-6 py-3" data-i18n="tbl_w_ids">Wafer IDs</th>
                     <th class="px-6 py-3" data-i18n="tbl_exp">Experiments</th>
+                    <th class="px-6 py-3 text-center" data-i18n="tbl_msg">Message</th>
                     <th class="px-6 py-3 text-right" data-i18n="tbl_action">Action</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50" id="approval-queue-body">
-                  <tr class="hover:bg-slate-50 transition-colors">
+                  <tr class="hover:bg-slate-50 transition-colors" data-priority="NORMAL">
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-corporate-blue text-white text-xs font-bold flex items-center justify-center shadow-sm">JL</div>
-                        <div>
-                          <div class="font-bold text-slate-900">Jasper Li</div>
+                        <div class="w-9 h-9 shrink-0 rounded-full bg-slate-300 text-slate-700 text-xs font-bold flex items-center justify-center shadow-sm">SW</div>
+                        <div class="whitespace-nowrap">
+                          <div class="font-bold text-slate-900 flex items-center gap-2">
+                            Sarah W.
+                            <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_normal">Normal</span>
+                          </div>
                           <div class="text-xs text-slate-500 font-mono mt-0.5" data-i18n="fab_id">Fab ID: F12-P4</div>
                         </div>
                       </div>
                     </td>
                     <td class="px-6 py-4">
-                      <div class="flex flex-wrap gap-1.5 max-w-full max-h-16 overflow-y-auto custom-scrollbar pr-1">
+                      <div class="flex flex-wrap gap-1.5 max-w-full">
                         <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-101</span>
                         <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-102</span>
-                        <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-103</span>
-                        <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-104</span>
-                        <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-105</span>
                       </div>
                     </td>
                     <td class="px-6 py-4">
@@ -364,7 +438,12 @@
                         <span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200" data-i18n="exp_etest">Electrical Test</span>
                       </div>
                     </td>
-                    <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                    <td class="px-6 py-4 text-center">
+                      <button onclick="viewMessage('Please process W-101 carefully, extremely fragile.')" class="p-1.5 text-corporate-blue hover:bg-blue-50 rounded-lg transition-colors" title="View Message">
+                        <span class="material-symbols-outlined text-[18px]">chat</span>
+                      </button>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
                       <button onclick="approveRequest(this)" class="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
                       <button onclick="rejectRequest(this)" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
                     </td>
@@ -379,52 +458,79 @@
               <h2 class="font-bold text-lg text-slate-900" data-i18n="mgr_idle_chart">Machine Idle Time (Weekly)</h2>
               <div class="text-right">
                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide" data-i18n="avg_util">Avg Utilization</p>
-                <p class="text-3xl font-bold text-emerald-500 leading-none mt-1.5">73.5%</p>
+                <p class="text-3xl font-bold text-emerald-500 leading-none mt-1.5">68.5%</p>
               </div>
             </div>
             
             <div class="relative pt-2 pb-8 flex-1 flex flex-col justify-around border-b border-slate-100">
-              <div class="absolute inset-0 flex justify-between ml-[70px] pb-8 pointer-events-none">
-                <div class="w-px h-full bg-slate-100"></div>
-                <div class="w-px h-full bg-slate-100"></div>
-                <div class="w-px h-full bg-slate-100"></div>
-                <div class="w-px h-full bg-slate-100"></div>
-                <div class="w-px h-full bg-slate-100"></div>
+              <div class="absolute inset-0 flex justify-between pl-28 pr-14 pb-8 pointer-events-none">
+                <div class="w-px h-full bg-slate-200"></div>
+                <div class="w-px h-full bg-slate-200"></div>
+                <div class="w-px h-full bg-slate-200"></div>
+                <div class="w-px h-full bg-slate-200"></div>
+                <div class="w-px h-full bg-slate-200"></div>
               </div>
-              
               <style>
                 @keyframes expandBar { from { width: 0; } }
                 .chart-bar { animation: expandBar 1s ease-out; }
               </style>
-
+              
               <div class="relative z-10 flex items-center gap-4">
-                <div class="w-14 text-xs font-bold text-slate-600 text-right">SEM-01</div>
+                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">SEM-01</div>
                 <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
                   <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
                   <div class="w-[10%] bg-slate-200 border-r border-slate-300/30"></div>
                   <div class="w-[50%] bg-emerald-400 chart-bar"></div>
                 </div>
-                <div class="w-10 text-[11px] font-bold text-slate-400 text-right">90%</div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">90%</div>
               </div>
               
               <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-14 text-xs font-bold text-slate-600 text-right">BAKE-01</div>
+                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">BAKE-OVEN-01</div>
                 <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[25%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[75%] bg-slate-200"></div>
+                  <div class="w-[55%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                  <div class="w-[45%] bg-slate-200"></div>
                 </div>
-                <div class="w-10 text-[11px] font-bold text-slate-400 text-right">25%</div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">55%</div>
               </div>
               
               <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-14 text-xs font-bold text-red-600 text-right">TEM-01</div>
+                <div class="w-24 shrink-0 text-xs font-bold text-red-600 text-right whitespace-nowrap">TEM-01</div>
                 <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-full bg-red-400 chart-bar"></div>
+                  <div class="w-[15%] bg-red-400 chart-bar"></div>
+                  <div class="w-[85%] bg-slate-200"></div>
                 </div>
-                <div class="w-10 text-[11px] font-bold text-red-400 text-right">0%</div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-red-400 text-right">0%</div>
               </div>
 
-              <div class="absolute bottom-0 left-[70px] right-14 flex justify-between text-[10px] font-bold text-slate-400 uppercase transform translate-y-3">
+              <div class="relative z-10 flex items-center gap-4 mt-5">
+                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">FIB-01</div>
+                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                  <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                  <div class="w-[60%] bg-slate-200"></div>
+                </div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">40%</div>
+              </div>
+
+              <div class="relative z-10 flex items-center gap-4 mt-5">
+                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">E-TEST-02</div>
+                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                  <div class="w-[85%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                  <div class="w-[15%] bg-slate-200"></div>
+                </div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">85%</div>
+              </div>
+
+              <div class="relative z-10 flex items-center gap-4 mt-5">
+                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">XRD-01</div>
+                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                  <div class="w-[65%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                  <div class="w-[35%] bg-slate-200"></div>
+                </div>
+                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">65%</div>
+              </div>
+
+              <div class="absolute bottom-0 left-0 w-full flex justify-between pl-28 pr-14 text-[10px] font-bold text-slate-400 uppercase transform translate-y-3">
                 <span data-i18n="day_mon">Mon</span>
                 <span data-i18n="day_tue">Tue</span>
                 <span data-i18n="day_wed">Wed</span>
@@ -433,7 +539,7 @@
               </div>
             </div>
             
-            <div class="mt-6 flex gap-6 text-[10px] font-bold text-slate-500 justify-center">
+            <div class="mt-8 flex gap-6 text-[10px] font-bold text-slate-500 justify-center">
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-emerald-400"></span> <span data-i18n="fsm_proc">RUNNING</span></span>
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-slate-200"></span> <span data-i18n="fsm_idle">IDLE</span></span>
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-red-400"></span> <span data-i18n="fsm_alarm">ALARM</span></span>
@@ -584,232 +690,110 @@
   </div>
 
   <script>
-    // 0. Global State & Translations (MUST BE AT THE TOP)
+    // 0. Global State & Translations
     let currentAppLang = 'en';
+    let unreadNotifs = 0;
 
     const translations = {
       'en': {
-        // System Enums & Data (Type 3)
-        'lab_ra': 'Reliability Lab (RA)',
-        'lab_ma': 'Material Analysis Lab (MA)',
-        'lab_fa': 'Failure Analysis Lab (FA)',
-        'exp_bake': 'High-Temp Bake',
-        'exp_etest': 'Electrical Test',
-        'exp_tshock': 'Thermal Shock',
-        'exp_humid': 'Humidity Test',
-        'exp_sem': 'Surface Scan (SEM)',
-        'exp_deep': 'Deep Layer Analysis',
-        'exp_comp': 'Composition Check',
-        'exp_xrd': 'X-Ray Diffraction',
-        'exp_defect': 'Defect Detection',
-        'exp_cross': 'Cross-section Analysis',
-        'exp_fib': 'Focused Ion Beam (FIB)',
+        'lab_ra': 'Reliability Lab (RA)', 'lab_ma': 'Material Analysis Lab (MA)', 'lab_fa': 'Failure Analysis Lab (FA)',
+        'exp_bake': 'High-Temp Bake', 'exp_etest': 'Electrical Test', 'exp_tshock': 'Thermal Shock', 'exp_humid': 'Humidity Test',
+        'exp_sem': 'Surface Scan (SEM)', 'exp_deep': 'Deep Layer Analysis', 'exp_comp': 'Composition Check', 'exp_xrd': 'X-Ray Diffraction (XRD)',
+        'exp_defect': 'Defect Detection', 'exp_cross': 'Cross-section Analysis', 'exp_fib': 'Focused Ion Beam (FIB)',
         'status_pending': 'PENDING',
-        'role_sysadmin': 'System Admin',
-        'role_labsup': 'Lab Supervisor',
-        'role_lab_operator': 'Lab Operator',
-        'role_machine_supervisor': 'Machine Supervisor',
-        'role_machine_owner': 'Machine Owner',
-        'role_fab_user': 'Fab User',
-        'role_public': 'Public',
-
-        // UI Static Text (Type 1)
-        'sys_notif': 'System Notifications',
-        'notif_order_done': 'Order REQ-B110 Completed',
-        'notif_wafers_ready': 'Wafers ready for collection.',
-        'notif_alert': 'Alert: TEM-01 Vacuum Fault',
-        'notif_maint': 'Immediate maintenance required.',
-        'nav_fab': 'Fab Request',
-        'nav_lab': 'Lab Operations',
-        'nav_mgr': 'Manager Dashboard',
-        'nav_prof': 'My Profile',
-        'fab_title': 'Create New Request',
-        'fab_desc': 'Fine-grained experiment assignment per Wafer ID.',
-        'emp_id': 'Employee ID',
-        'target_lab': 'Target Laboratory',
-        'select_exp': 'Select Experiment Items',
-        'iterative_wafer': 'Iterative Wafer ID Input',
-        'add_wafer_btn': 'Add Wafer',
-        'priority': 'Priority',
-        'pri_normal': 'Normal',
-        'pri_urgent': 'Urgent',
-        'pri_critical': 'Critical',
-        'order_remarks': 'Order Remarks',
-        'submit_btn': 'Submit for Approval',
-        'my_req_prog': 'My Requests Progress',
-        'tbl_req_id': 'Req ID',
-        'tbl_exp': 'Experiments',
-        'tbl_wafers_cnt': 'Wafers Count',
-        'tbl_status': 'Status',
-        'wip_sorting': 'Pending Wafers for Sorting (WIP)',
-        'tbl_wafer_id': 'Wafer ID',
-        'tbl_req_exp': 'Required Exp.',
-        'dispatch_title': 'Dispatch to Machine',
-        'sel_wips': 'Selected WIPs',
-        'wips_placeholder': '2 Wafers Selected',
-        'target_mach': 'Target Machine',
-        'recipe': 'Recipe',
-        'exec_dispatch': 'Execute Dispatch',
-        'fsm_title': 'Machine Management (FSM)',
-        'fsm_proc': 'PROCESSING',
-        'fsm_idle': 'IDLE',
-        'fsm_alarm': 'ALARM',
-        'fsm_owners': 'Owners',
-        'mgr_approval': 'Approval Queue (Capacity Check Required)',
-        'tbl_reqster': 'Requester',
-        'tbl_w_ids': 'Wafer IDs',
-        'tbl_action': 'Action',
-        'btn_approve': 'Approve',
-        'btn_reject': 'Reject',
-        'mgr_idle_chart': 'Machine Idle Time (Weekly)',
-        'prof_title': 'User Profile',
-        'prof_desc': 'Manage your personal information and security settings.',
-        'btn_exp_logs': 'Export Logs',
-        'btn_save': 'Save Changes',
-        'status': 'Status',
-        'stat_active': 'Active',
-        'stat_enabled': 'Enabled',
-        'sys_priv': 'System Privileges',
-        'priv_lab': 'Full Laboratory Access',
-        'priv_inv': 'Inventory Management',
-        'priv_uac': 'User Access Control (UAC)',
-        'pers_info': 'Personal Information',
-        'full_name': 'Full Name',
-        'email_addr': 'Email Address',
-        'dept': 'Department',
-        'prim_role': 'Primary Role',
-        'sec_settings': 'Security Settings',
-        'acc_pwd': 'Account Password',
-        'pwd_desc': 'Last changed: 3 months ago. We recommend updating regularly.',
-        'btn_chg_pwd': 'Change Password',
-        'two_fac': 'Two-Factor Authentication (2FA)',
-        'two_fac_desc': '2FA adds an extra layer of security to your account by requiring more than just a password to log in.',
-        'active_sess': 'Active Sessions: 2 (This browser + Mobile App)',
-        'btn_revoke': 'Revoke All Sessions',
-        'fab_id': 'Fab ID: F12-P4',
-        'avg_util': 'Avg Utilization',
-        'day_mon': 'Mon', 'day_tue': 'Tue', 'day_wed': 'Wed', 'day_thu': 'Thu', 'day_fri': 'Fri'
+        'role_sysadmin': 'System Admin', 'role_labsup': 'Lab Supervisor', 'role_lab_operator': 'Lab Operator',
+        'role_machine_supervisor': 'Machine Supervisor', 'role_machine_owner': 'Machine Owner', 'role_fab_user': 'Fab User', 'role_public': 'Public',
+        'sys_notif': 'System Notifications', 'notif_order_done': 'Order REQ-B110 Completed', 'notif_wafers_ready': 'Wafers ready for collection.',
+        'notif_alert': 'Alert: TEM-01 Vacuum Fault', 'notif_maint': 'Immediate maintenance required.',
+        'nav_fab': 'Fab Request', 'nav_lab': 'Lab Operations', 'nav_mgr': 'Manager Dashboard', 'nav_prof': 'My Profile',
+        'fab_title': 'Create New Request', 'fab_desc': 'Fine-grained experiment assignment per Wafer ID.',
+        'emp_id': 'Employee ID', 'target_lab': 'Target Laboratory', 'select_exp': 'Select Experiment Items',
+        'iterative_wafer': 'Iterative Wafer ID Input', 'add_wafer_btn': 'Add Wafer', 'priority': 'Priority',
+        'pri_normal': 'Normal', 'pri_urgent': 'Urgent', 'pri_critical': 'Critical', 'order_remarks': 'Order Remarks',
+        'submit_btn': 'Submit for Approval', 'my_req_prog': 'My Requests Progress', 'tbl_req_id': 'Req ID',
+        'tbl_exp': 'Experiments', 'tbl_wafers_cnt': 'Wafers Count', 'tbl_status': 'Status',
+        'wip_sorting': 'Pending Wafers for Sorting (WIP)', 'tbl_wafer_id': 'Wafer ID', 'tbl_req_exp': 'Required Exp.',
+        'dispatch_title': 'Dispatch to Machine', 'sel_wips': 'Selected WIPs', 'wips_placeholder': '2 Wafers Selected',
+        'target_mach': 'Target Machine', 'recipe': 'Recipe', 'exec_dispatch': 'Execute Dispatch',
+        'fsm_title': 'Machine Management (FSM)', 'fsm_proc': 'PROCESSING', 'fsm_idle': 'IDLE', 'fsm_alarm': 'ALARM', 'fsm_owners': 'Owners',
+        'mgr_approval': 'Approval Queue (Capacity Check Required)', 'tbl_reqster': 'Requester', 'tbl_w_ids': 'Wafer IDs', 'tbl_action': 'Action',
+        'btn_approve': 'Approve', 'btn_reject': 'Reject', 'mgr_idle_chart': 'Machine Idle Time (Weekly)',
+        'prof_title': 'User Profile', 'prof_desc': 'Manage your personal information and security settings.',
+        'btn_exp_logs': 'Export Logs', 'btn_save': 'Save Changes', 'status': 'Status', 'stat_active': 'Active', 'stat_enabled': 'Enabled',
+        'sys_priv': 'System Privileges', 'priv_lab': 'Full Laboratory Access', 'priv_inv': 'Inventory Management', 'priv_uac': 'User Access Control (UAC)',
+        'pers_info': 'Personal Information', 'full_name': 'Full Name', 'email_addr': 'Email Address', 'dept': 'Department',
+        'prim_role': 'Primary Role', 'sec_settings': 'Security Settings', 'acc_pwd': 'Account Password', 'pwd_desc': 'Last changed: 3 months ago. We recommend updating regularly.',
+        'btn_chg_pwd': 'Change Password', 'two_fac': 'Two-Factor Authentication (2FA)', 'two_fac_desc': '2FA adds an extra layer of security to your account by requiring more than just a password to log in.',
+        'active_sess': 'Active Sessions: 2 (This browser + Mobile App)', 'btn_revoke': 'Revoke All Sessions',
+        'fab_id': 'Fab ID: F12-P4', 'avg_util': 'Avg Utilization',
+        'day_mon': 'Mon', 'day_tue': 'Tue', 'day_wed': 'Wed', 'day_thu': 'Thu', 'day_fri': 'Fri',
+        'wafer_format_err': 'Invalid format. Must be W-XXXX (e.g., W-1049).', 'queue_empty': 'Queue is empty. All caught up!', 
+        'tbl_msg': 'Message', 'lbl_pending': 'PENDING', 'notif_new_req': 'New Request', 'notif_req_appr': 'Request Approved',
+        'no_notif': 'No new notifications'
       },
       'tw': {
-        'lab_ra': '可靠度實驗室 (RA)',
-        'lab_ma': '材料分析實驗室 (MA)',
-        'lab_fa': '故障分析實驗室 (FA)',
-        'exp_bake': '高溫烘烤',
-        'exp_etest': '電性測試',
-        'exp_tshock': '冷熱衝擊',
-        'exp_humid': '溫濕度測試',
-        'exp_sem': '表面掃描 (SEM)',
-        'exp_deep': '深層結構分析',
-        'exp_comp': '成分檢驗',
-        'exp_xrd': 'X光繞射 (XRD)',
-        'exp_defect': '缺陷偵測',
-        'exp_cross': '截面分析',
-        'exp_fib': '聚焦離子束 (FIB)',
+        'lab_ra': '可靠度實驗室 (RA)', 'lab_ma': '材料分析實驗室 (MA)', 'lab_fa': '故障分析實驗室 (FA)',
+        'exp_bake': '高溫烘烤', 'exp_etest': '電性測試', 'exp_tshock': '冷熱衝擊', 'exp_humid': '溫濕度測試',
+        'exp_sem': '表面掃描 (SEM)', 'exp_deep': '深層結構分析', 'exp_comp': '成分檢驗', 'exp_xrd': 'X光繞射 (XRD)',
+        'exp_defect': '缺陷偵測', 'exp_cross': '截面分析', 'exp_fib': '聚焦離子束 (FIB)',
         'status_pending': '待處理',
-        'role_sysadmin': '系統管理員',
-        'role_labsup': '實驗室主管',
-        'role_lab_operator': '實驗室人員',
-        'role_machine_supervisor': '機台主管',
-        'role_machine_owner': '機台負責人',
-        'role_fab_user': '廠區使用者',
-        'role_public': '一般大眾 (最低權限)',
-
-        'sys_notif': '系統通知',
-        'notif_order_done': '委託單 REQ-B110 已完成',
-        'notif_wafers_ready': '晶圓已準備好可供取回。',
-        'notif_alert': '警報：TEM-01 真空異常',
-        'notif_maint': '需要立即進行機台維護。',
-        'nav_fab': '建立委託單',
-        'nav_lab': '實驗室操作',
-        'nav_mgr': '主管儀表板',
-        'nav_prof': '個人設定',
-        'fab_title': '建立新委託單',
-        'fab_desc': '針對各晶圓 (Wafer) 進行精細的實驗項目分配。',
-        'emp_id': '員工編號',
-        'target_lab': '目標實驗室',
-        'select_exp': '選擇實驗項目 (可複選)',
-        'iterative_wafer': '輸入晶圓編號 (Wafer ID)',
-        'add_wafer_btn': '新增晶圓',
-        'priority': '優先權',
-        'pri_normal': '一般',
-        'pri_urgent': '急件',
-        'pri_critical': '特急件',
-        'order_remarks': '委託單備註',
-        'submit_btn': '送出簽核',
-        'my_req_prog': '我的委託單進度',
-        'tbl_req_id': '委託單號',
-        'tbl_exp': '實驗項目',
-        'tbl_wafers_cnt': '晶圓數量',
-        'tbl_status': '狀態',
-        'wip_sorting': '待分貨晶圓 (WIP)',
-        'tbl_wafer_id': '晶圓編號',
-        'tbl_req_exp': '需求實驗',
-        'dispatch_title': '派發至機台',
-        'sel_wips': '已選 WIP',
-        'wips_placeholder': '已選擇 2 片晶圓',
-        'target_mach': '目標機台',
-        'recipe': '實驗參數 (Recipe)',
-        'exec_dispatch': '執行派發',
-        'fsm_title': '機台管理與狀態 (FSM)',
-        'fsm_proc': '執行中',
-        'fsm_idle': '閒置',
-        'fsm_alarm': '異常',
-        'fsm_owners': '負責人',
-        'mgr_approval': '簽核佇列 (需進行產能檢核)',
-        'tbl_reqster': '申請人',
-        'tbl_w_ids': '晶圓列表',
-        'tbl_action': '操作',
-        'btn_approve': '核准',
-        'btn_reject': '退件',
-        'mgr_idle_chart': '機台閒置時間 (每週統計)',
-        'prof_title': '使用者檔案',
-        'prof_desc': '管理您的個人資訊與系統安全設定。',
-        'btn_exp_logs': '匯出紀錄',
-        'btn_save': '儲存變更',
-        'status': '狀態',
-        'stat_active': '使用中',
-        'stat_enabled': '已啟用',
-        'sys_priv': '系統權限',
-        'priv_lab': '完整實驗室存取權',
-        'priv_inv': '耗材庫存管理',
-        'priv_uac': '使用者存取控制 (UAC)',
-        'pers_info': '個人資訊',
-        'full_name': '姓名',
-        'email_addr': '電子郵件',
-        'dept': '所屬部門',
-        'prim_role': '主要職位',
-        'sec_settings': '安全性設定',
-        'acc_pwd': '帳號密碼',
-        'pwd_desc': '上次變更：3 個月前。我們建議您定期更新密碼。',
-        'btn_chg_pwd': '變更密碼',
-        'two_fac': '雙重驗證 (2FA)',
-        'two_fac_desc': '2FA 為您的帳號增加額外的安全防護，登入時除了密碼還需提供額外驗證。',
-        'active_sess': '活躍中的登入階段: 2 (當前瀏覽器 + 行動裝置 App)',
-        'btn_revoke': '撤銷所有登入階段',
-        'fab_id': '廠區代碼: F12-P4',
-        'avg_util': '平均稼動率',
-        'day_mon': '一', 'day_tue': '二', 'day_wed': '三', 'day_thu': '四', 'day_fri': '五'
+        'role_sysadmin': '系統管理員', 'role_labsup': '實驗室主管', 'role_lab_operator': '實驗室人員',
+        'role_machine_supervisor': '機台主管', 'role_machine_owner': '機台負責人', 'role_fab_user': '廠區使用者', 'role_public': '一般大眾 (最低權限)',
+        'sys_notif': '系統通知', 'notif_order_done': '委託單 REQ-B110 已完成', 'notif_wafers_ready': '晶圓已準備好可供取回。',
+        'notif_alert': '警報：TEM-01 真空異常', 'notif_maint': '需要立即進行機台維護。',
+        'nav_fab': '建立委託單', 'nav_lab': '實驗室操作', 'nav_mgr': '主管儀表板', 'nav_prof': '個人設定',
+        'fab_title': '建立新委託單', 'fab_desc': '針對各晶圓 (Wafer) 進行精細的實驗項目分配。',
+        'emp_id': '員工編號', 'target_lab': '目標實驗室', 'select_exp': '選擇實驗項目 (可複選)',
+        'iterative_wafer': '輸入晶圓編號 (Wafer ID)', 'add_wafer_btn': '新增晶圓', 'priority': '優先權',
+        'pri_normal': '一般', 'pri_urgent': '急件', 'pri_critical': '特急件', 'order_remarks': '委託單備註',
+        'submit_btn': '送出簽核', 'my_req_prog': '我的委託單進度', 'tbl_req_id': '委託單號',
+        'tbl_exp': '實驗項目', 'tbl_wafers_cnt': '晶圓數量', 'tbl_status': '狀態',
+        'wip_sorting': '待分貨晶圓 (WIP)', 'tbl_wafer_id': '晶圓編號', 'tbl_req_exp': '需求實驗',
+        'dispatch_title': '派發至機台', 'sel_wips': '已選 WIP', 'wips_placeholder': '已選擇 2 片晶圓',
+        'target_mach': '目標機台', 'recipe': '實驗參數 (Recipe)', 'exec_dispatch': '執行派發',
+        'fsm_title': '機台管理與狀態 (FSM)', 'fsm_proc': '執行中', 'fsm_idle': '閒置', 'fsm_alarm': '異常', 'fsm_owners': '負責人',
+        'mgr_approval': '簽核佇列 (需進行產能檢核)', 'tbl_reqster': '申請人', 'tbl_w_ids': '晶圓列表', 'tbl_action': '操作',
+        'btn_approve': '核准', 'btn_reject': '退件', 'mgr_idle_chart': '機台閒置時間 (每週統計)',
+        'prof_title': '使用者檔案', 'prof_desc': '管理您的個人資訊與系統安全設定。',
+        'btn_exp_logs': '匯出紀錄', 'btn_save': '儲存變更', 'status': '狀態', 'stat_active': '使用中', 'stat_enabled': '已啟用',
+        'sys_priv': '系統權限', 'priv_lab': '完整實驗室存取權', 'priv_inv': '耗材庫存管理', 'priv_uac': '使用者存取控制 (UAC)',
+        'pers_info': '個人資訊', 'full_name': '姓名', 'email_addr': '電子郵件', 'dept': '所屬部門',
+        'prim_role': '主要職位', 'sec_settings': '安全性設定', 'acc_pwd': '帳號密碼', 'pwd_desc': '上次變更：3 個月前。我們建議您定期更新密碼。',
+        'btn_chg_pwd': '變更密碼', 'two_fac': '雙重驗證 (2FA)', 'two_fac_desc': '2FA 為您的帳號增加額外的安全防護，登入時除了密碼還需提供額外驗證。',
+        'active_sess': '活躍中的登入階段: 2 (當前瀏覽器 + 行動裝置 App)', 'btn_revoke': '撤銷所有登入階段',
+        'fab_id': '廠區代碼: F12-P4', 'avg_util': '平均稼動率',
+        'day_mon': '一', 'day_tue': '二', 'day_wed': '三', 'day_thu': '四', 'day_fri': '五',
+        'wafer_format_err': '格式錯誤，請輸入 W-XXXX (例如: W-1049)。', 'queue_empty': '目前無待簽核項目！',
+        'tbl_msg': '備註', 'lbl_pending': '待簽核', 'notif_new_req': '新委託單成立', 'notif_req_appr': '委託單已核准',
+        'no_notif': '目前無新通知'
       }
     };
+
+    // --- Badge Generator Utility ---
+    function getPriorityBadgeHtml(val) {
+      const keys = { 'NORMAL': 'pri_normal', 'URGENT': 'pri_urgent', 'CRITICAL': 'pri_critical' };
+      const colors = { 
+        'NORMAL': 'bg-slate-100 text-slate-600', 
+        'URGENT': 'bg-amber-50 text-amber-600', 
+        'CRITICAL': 'bg-red-50 text-red-600' 
+      };
+      const key = keys[val] || 'pri_normal';
+      const color = colors[val] || colors['NORMAL'];
+      const text = translations[currentAppLang][key] || val;
+      return `<span class="px-2 py-1 ${color} rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="${key}">${text}</span>`;
+    }
 
     // 1. Language Toggle Logic
     function setLanguage(lang) {
       currentAppLang = lang; 
-      
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.className = 'px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all';
-      });
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.className = 'px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all');
       const activeBtn = document.getElementById(`btn-lang-${lang}`);
-      if (activeBtn) {
-        activeBtn.className = 'px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all';
-      }
-
+      if (activeBtn) activeBtn.className = 'px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all';
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-          el.innerText = translations[lang][key];
-        }
+        if (translations[lang] && translations[lang][key]) el.innerText = translations[lang][key];
       });
+      updateWipCount();
     }
 
     // 2. Tab Switching Logic
@@ -821,45 +805,127 @@
         });
         button.classList.add('active', 'bg-corporate-blue', 'text-white');
         button.classList.remove('text-slate-600', 'hover:bg-slate-50');
-
         document.querySelectorAll('.view-content').forEach(view => view.classList.remove('active'));
         const targetView = document.getElementById(button.getAttribute('data-view'));
         if (targetView) targetView.classList.add('active');
       });
     });
 
-    // 3. Notification Bell Toggle
+    // 3. Notification Bell Logic
     const bellBtn = document.getElementById('bell-btn');
     const notifPanel = document.getElementById('notif-panel');
     if (bellBtn && notifPanel) {
-      bellBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        notifPanel.classList.toggle('hidden');
-      });
-      document.addEventListener('click', (e) => {
-        if (!notifPanel.contains(e.target) && e.target !== bellBtn) {
-          notifPanel.classList.add('hidden');
+      bellBtn.addEventListener('click', (e) => { 
+        e.stopPropagation(); 
+        notifPanel.classList.toggle('hidden'); 
+        if (!notifPanel.classList.contains('hidden')) {
+           unreadNotifs = 0;
+           document.getElementById('notif-badge')?.classList.add('hidden');
+           document.getElementById('notif-badge')?.classList.remove('animate-pulse');
+           document.getElementById('notif-count-text')?.classList.add('hidden');
         }
+      });
+      document.addEventListener('click', (e) => { 
+        if (!notifPanel.contains(e.target) && e.target !== bellBtn) notifPanel.classList.add('hidden'); 
       });
     }
 
-    // 4. Dummy Add Wafer Logic
-    function addWafer() {
-      const input = document.getElementById('waferInput');
-      const container = document.getElementById('waferContainer');
-      if (input && container && input.value.trim() !== '') {
-        const span = document.createElement('span');
-        span.className = 'bg-blue-100 text-corporate-blue px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1';
-        span.innerHTML = `${input.value} <span class="material-symbols-outlined text-[14px] cursor-pointer" onclick="this.parentElement.remove()">close</span>`;
-        container.appendChild(span);
-        input.value = '';
+    function addNotification(titleKey, fallbackTitle, desc, type = 'info') {
+      const notifList = document.getElementById('notif-list');
+      const badge = document.getElementById('notif-badge');
+      const countText = document.getElementById('notif-count-text');
+      if (!notifList) return;
+
+      if (notifList.children.length === 1 && notifList.firstElementChild.getAttribute('data-i18n') === 'no_notif') {
+          notifList.innerHTML = '';
+      }
+
+      const notif = document.createElement('div');
+      const isSuccess = type === 'success';
+      notif.className = `relative group p-3 ${isSuccess ? 'bg-emerald-50/50 border-emerald-100' : 'bg-blue-50/50 border-blue-100'} rounded-xl border flex justify-between items-start animate-[fadeIn_0.3s_ease-out] transition-all`;
+      
+      const icon = isSuccess ? 'check_circle' : 'info';
+      const iconColor = isSuccess ? 'text-emerald-500' : 'text-corporate-blue';
+      const titleTrans = translations[currentAppLang][titleKey] || fallbackTitle;
+
+      notif.innerHTML = `
+        <div class="flex gap-3 pr-4">
+          <span class="material-symbols-outlined ${iconColor} text-sm mt-0.5">${icon}</span>
+          <div>
+            <p class="text-xs font-bold text-slate-800">${titleTrans}</p>
+            <p class="text-[10px] text-slate-500 font-mono">${desc}</p>
+          </div>
+        </div>
+        <button onclick="removeNotification(this)" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity">
+          <span class="material-symbols-outlined text-[16px]">close</span>
+        </button>
+      `;
+      notifList.insertBefore(notif, notifList.firstChild);
+
+      unreadNotifs++;
+      if (badge && countText) {
+        badge.classList.remove('hidden');
+        badge.classList.add('animate-pulse');
+        countText.classList.remove('hidden');
+        countText.innerText = currentAppLang === 'en' ? `${unreadNotifs} New` : `${unreadNotifs} 新通知`;
       }
     }
 
-    // 5. Dynamic Experiment Selection (Using Enum Mapping Logic)
+    function removeNotification(btn) {
+      const notif = btn.closest('.group');
+      notif.style.opacity = '0';
+      notif.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        notif.remove();
+        checkEmptyNotifications();
+      }, 300);
+    }
+
+    function checkEmptyNotifications() {
+       const list = document.getElementById('notif-list');
+       if (list && list.children.length === 0) {
+          list.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs" data-i18n="no_notif">No new notifications</div>`;
+          setLanguage(currentAppLang);
+       }
+    }
+
+    // 4. Add Wafer Logic
+    function addWafer() {
+      const input = document.getElementById('waferInput');
+      const container = document.getElementById('waferContainer');
+      const errorMsg = document.getElementById('waferErrorMsg');
+      const val = input.value.trim().toUpperCase();
+
+      if (!val) return;
+
+      const regex = /^W-[0-9]{4}$/;
+      if (!regex.test(val)) {
+        input.classList.add('border-red-500', 'focus:ring-red-500');
+        input.classList.remove('border-slate-300', 'focus:ring-corporate-blue');
+        errorMsg.classList.remove('hidden');
+        return;
+      }
+
+      input.classList.remove('border-red-500', 'focus:ring-red-500');
+      input.classList.add('border-slate-300', 'focus:ring-corporate-blue');
+      errorMsg.classList.add('hidden');
+
+      if (document.querySelector(`span[data-wafer="${val}"]`)) {
+        alert(currentAppLang === 'en' ? "Wafer ID already added!" : "此晶圓編號已存在！");
+        return;
+      }
+
+      const span = document.createElement('span');
+      span.className = 'bg-blue-100 text-corporate-blue px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition-all';
+      span.setAttribute('data-wafer', val);
+      span.innerHTML = `${val} <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-red-500" onclick="this.parentElement.remove()">close</span>`;
+      container.appendChild(span);
+      input.value = '';
+    }
+
+    // 5. Dynamic Experiment Selection
     const labSelect = document.getElementById('labSelect');
     const experimentContainer = document.getElementById('experimentContainer');
-
     const labExperiments = {
       'LAB_RA': ['exp_bake', 'exp_etest', 'exp_tshock', 'exp_humid'],
       'LAB_MA': ['exp_sem', 'exp_deep', 'exp_comp', 'exp_xrd'],
@@ -870,26 +936,21 @@
       if (!labSelect || !experimentContainer) return;
       const selectedLab = labSelect.value;
       const experimentEnumKeys = labExperiments[selectedLab] || [];
-      
       experimentContainer.innerHTML = '';
-      
       experimentEnumKeys.forEach(expEnumKey => {
         const label = document.createElement('label');
         label.className = 'flex items-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors';
-        
         const translatedText = translations[currentAppLang][expEnumKey] || expEnumKey;
-        
-        label.innerHTML = `<input type="checkbox" class="text-corporate-blue rounded focus:ring-corporate-blue"><span class="text-sm font-medium" data-i18n="${expEnumKey}">${translatedText}</span>`;
+        label.innerHTML = `<input type="checkbox" value="${expEnumKey}" class="experiment-checkbox text-corporate-blue rounded focus:ring-corporate-blue"><span class="text-sm font-medium" data-i18n="${expEnumKey}">${translatedText}</span>`;
         experimentContainer.appendChild(label);
       });
     }
 
     if (labSelect) {
       labSelect.addEventListener('change', renderExperiments);
-      renderExperiments(); // Will now safely execute because translations is initialized!
+      renderExperiments(); 
     }
 
-    // 6. Priority Color Change Logic
     function updatePriorityColor() {
       const select = document.getElementById('prioritySelect');
       if (!select) return;
@@ -898,18 +959,103 @@
       else if (select.value === 'URGENT') select.classList.add('text-amber-700', 'bg-amber-50');
       else if (select.value === 'CRITICAL') select.classList.add('text-red-700', 'bg-red-50');
     }
-
     const prioritySelect = document.getElementById('prioritySelect');
     if (prioritySelect) updatePriorityColor();
 
-    // 7. Submit Alert
+    // 6. Submit Workflow Logic
     function submitRequest() {
-      alert(currentAppLang === 'en' ? 
-        "✅ Request Submitted Successfully!\n\nYour request has been forwarded to the lab manager for approval." : 
-        "✅ 已送出成功！\n\n您的委託單已送交實驗室主管進行簽核。");
+      const waferElements = document.querySelectorAll('#waferContainer span[data-wafer]');
+      if (waferElements.length === 0) {
+        alert(currentAppLang === 'en' ? "Please add at least one wafer." : "請至少新增一片晶圓。");
+        return;
+      }
+
+      const selectedExps = Array.from(document.querySelectorAll('.experiment-checkbox:checked')).map(cb => cb.value);
+      if (selectedExps.length === 0) {
+        alert(currentAppLang === 'en' ? "Please select at least one experiment." : "請至少選擇一個實驗項目。");
+        return;
+      }
+
+      const reqId = 'REQ-' + Math.floor(Math.random() * 9000 + 1000);
+      const wafersCount = waferElements.length;
+      const waferIds = Array.from(waferElements).map(el => el.getAttribute('data-wafer'));
+      const userName = document.getElementById('header-user-name').innerText;
+      const userInitials = document.getElementById('header-user-initials').innerText;
+      
+      const priorityVal = document.getElementById('prioritySelect').value;
+      const priorityBadgeHtml = getPriorityBadgeHtml(priorityVal);
+
+      const remarksRaw = document.getElementById('orderRemarks').value.trim();
+      const safeRemarks = remarksRaw.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const messageCellHtml = remarksRaw 
+        ? `<button onclick="viewMessage('${safeRemarks}')" class="p-1.5 text-corporate-blue hover:bg-blue-50 rounded-lg transition-colors" title="View Message"><span class="material-symbols-outlined text-[18px]">chat</span></button>` 
+        : `<span class="text-slate-300">-</span>`;
+
+      const expHtmlForMyReq = selectedExps.map(expKey => `<span data-i18n="${expKey}">${translations[currentAppLang][expKey] || expKey}</span>`).join(', ');
+      const expHtmlForManager = selectedExps.map(expKey => `<span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200" data-i18n="${expKey}">${translations[currentAppLang][expKey] || expKey}</span>`).join(' ');
+      const waferHtmlForManager = waferIds.map(w => `<span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">${w}</span>`).join(' ');
+
+      const myReqBody = document.getElementById('my-requests-body');
+      if (myReqBody) {
+        const myReqRow = document.createElement('tr');
+        myReqRow.className = "hover:bg-slate-50";
+        myReqRow.innerHTML = `
+          <td class="px-6 py-4 font-mono font-bold">${reqId}</td>
+          <td class="px-6 py-4 text-xs text-slate-600">${expHtmlForMyReq}</td>
+          <td class="px-6 py-4">${wafersCount}</td>
+          <td class="px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
+        `;
+        myReqBody.insertBefore(myReqRow, myReqBody.firstChild);
+      }
+
+      const approvalBody = document.getElementById('approval-queue-body');
+      if (approvalBody) {
+        if (approvalBody.querySelector('td[colspan="5"]')) approvalBody.innerHTML = ''; 
+        const mgrRow = document.createElement('tr');
+        mgrRow.className = "hover:bg-slate-50 transition-colors";
+        mgrRow.setAttribute('data-priority', priorityVal);
+
+        mgrRow.innerHTML = `
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 shrink-0 rounded-full bg-corporate-blue text-white text-xs font-bold flex items-center justify-center shadow-sm">${userInitials}</div>
+              <div class="whitespace-nowrap">
+                <div class="font-bold text-slate-900 flex items-center gap-2">
+                  ${userName}
+                  ${priorityBadgeHtml}
+                </div>
+                <div class="text-xs text-slate-500 font-mono mt-0.5" data-i18n="fab_id">Fab ID: F12-P4</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex flex-wrap gap-1.5 max-w-full">${waferHtmlForManager}</div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex flex-wrap gap-1.5 max-w-full">${expHtmlForManager}</div>
+          </td>
+          <td class="px-6 py-4 text-center align-middle">
+            ${messageCellHtml}
+          </td>
+          <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
+            <button onclick="approveRequest(this)" class="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
+            <button onclick="rejectRequest(this)" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
+          </td>
+        `;
+        approvalBody.insertBefore(mgrRow, approvalBody.firstChild);
+      }
+
+      addNotification('notif_new_req', 'New Request', `A new request with ${wafersCount} wafers is pending.`, 'info');
+      alert(currentAppLang === 'en' ? `✅ Request [${reqId}] Submitted Successfully!` : `✅ 委託單 [${reqId}] 已送出成功！`);
+      
+      document.getElementById('waferContainer').innerHTML = ''; 
+      document.getElementById('orderRemarks').value = '';
+      document.querySelectorAll('.experiment-checkbox').forEach(cb => cb.checked = false); 
+      updatePendingCounter(); 
+      setLanguage(currentAppLang); 
     }
 
-    // 8. Go to Profile Function
+    // 7. Utility & Sub-functions
     function goToProfile() {
       document.querySelectorAll('.nav-link').forEach(btn => {
         btn.classList.remove('active', 'bg-corporate-blue', 'text-white');
@@ -925,18 +1071,13 @@
       if (targetView) targetView.classList.add('active');
     }
 
-    // 9. Profile Synchronization Logic
     function saveProfile() {
       const newName = document.getElementById('input-user-name').value.trim();
       const newRoleElement = document.getElementById('input-user-role');
-      
       const selectedRoleEnum = newRoleElement.value;
       const translatedRole = translations[currentAppLang][selectedRoleEnum] || selectedRoleEnum;
 
-      if (!newName) { 
-        alert(currentAppLang === 'en' ? "Please enter a valid name." : "請輸入有效姓名。"); 
-        return; 
-      }
+      if (!newName) { alert(currentAppLang === 'en' ? "Please enter a valid name." : "請輸入有效姓名。"); return; }
       
       const nameParts = newName.split(' ');
       let initials = '';
@@ -947,65 +1088,36 @@
       document.getElementById('header-user-role').setAttribute('data-i18n', selectedRoleEnum);
       document.getElementById('header-user-role').innerText = translatedRole;
       document.getElementById('header-user-initials').innerText = initials;
-      
       document.getElementById('card-user-name').innerText = newName;
       document.getElementById('card-user-role').setAttribute('data-i18n', selectedRoleEnum);
       document.getElementById('card-user-role').innerText = translatedRole;
       document.getElementById('card-user-initials').innerText = initials;
       
-      // Apply RBAC Rules based on new role
       applyPermissions(selectedRoleEnum);
-
-      alert(currentAppLang === 'en' ? 
-        "✅ Profile Updated Successfully!\n\nHeader and Profile card have been synced." :
-        "✅ 檔案更新成功！\n\n頂部選單與個人卡片資料已同步。");
+      alert(currentAppLang === 'en' ? "✅ Profile Updated Successfully!\n\nHeader and Profile card have been synced." : "✅ 檔案更新成功！\n\n頂部選單與個人卡片資料已同步。");
     }
 
-    // 10. Dummy Feature Alert
     function dummyAlert(featureName) {
-      alert(currentAppLang === 'en' ? 
-        `The [${featureName}] feature is under development and will be available after API integration.` : 
-        `【${featureName}】功能正在開發中，將於後端 API 串接後開放。`);
+      alert(currentAppLang === 'en' ? `The [${featureName}] feature is under development and will be available after API integration.` : `【${featureName}】功能正在開發中，將於後端 API 串接後開放。`);
     }
 
-    // 11. 2FA Toggle Animation Logic
     let is2FAEnabled = true;
     function toggle2FA() {
       is2FAEnabled = !is2FAEnabled;
-      const btn = document.getElementById('btn-2fa');
-      const knob = document.getElementById('knob-2fa');
-      const statusText = document.getElementById('status-2fa-text');
-      const badge = document.getElementById('badge-2fa');
-
+      const btn = document.getElementById('btn-2fa'), knob = document.getElementById('knob-2fa'), statusText = document.getElementById('status-2fa-text'), badge = document.getElementById('badge-2fa');
       if (is2FAEnabled) {
-        // Turn ON styles
-        btn.classList.replace('bg-slate-300', 'bg-emerald-500');
-        knob.classList.replace('translate-x-0', 'translate-x-5');
-        
-        statusText.innerText = currentAppLang === 'en' ? 'Enabled' : '已啟用';
-        statusText.setAttribute('data-i18n', 'stat_enabled');
-        
-        badge.innerText = currentAppLang === 'en' ? 'Active' : '使用中';
-        badge.setAttribute('data-i18n', 'stat_active');
-        badge.classList.replace('bg-slate-100', 'bg-emerald-100');
-        badge.classList.replace('text-slate-600', 'text-emerald-700');
+        btn.classList.replace('bg-slate-300', 'bg-emerald-500'); knob.classList.replace('translate-x-0', 'translate-x-5');
+        statusText.innerText = currentAppLang === 'en' ? 'Enabled' : '已啟用'; statusText.setAttribute('data-i18n', 'stat_enabled');
+        badge.innerText = currentAppLang === 'en' ? 'Active' : '使用中'; badge.setAttribute('data-i18n', 'stat_active');
+        badge.classList.replace('bg-slate-100', 'bg-emerald-100'); badge.classList.replace('text-slate-600', 'text-emerald-700');
       } else {
-        // Turn OFF styles
-        btn.classList.replace('bg-emerald-500', 'bg-slate-300');
-        knob.classList.replace('translate-x-5', 'translate-x-0');
-        
-        // You can add these keys to the translations dictionary if you want
-        statusText.innerText = currentAppLang === 'en' ? 'Disabled' : '已停用';
-        statusText.removeAttribute('data-i18n'); // Remove to prevent overwrite
-        
-        badge.innerText = currentAppLang === 'en' ? 'Inactive' : '已停用';
-        badge.removeAttribute('data-i18n');
-        badge.classList.replace('bg-emerald-100', 'bg-slate-100');
-        badge.classList.replace('text-emerald-700', 'text-slate-600');
+        btn.classList.replace('bg-emerald-500', 'bg-slate-300'); knob.classList.replace('translate-x-5', 'translate-x-0');
+        statusText.innerText = currentAppLang === 'en' ? 'Disabled' : '已停用'; statusText.removeAttribute('data-i18n'); 
+        badge.innerText = currentAppLang === 'en' ? 'Inactive' : '已停用'; badge.removeAttribute('data-i18n');
+        badge.classList.replace('bg-emerald-100', 'bg-slate-100'); badge.classList.replace('text-emerald-700', 'text-slate-600');
       }
     }
 
-    // 12. Role-Based Access Control (RBAC) Logic
     const rolePermissions = {
       'ROLE_SYSADMIN': ['view-factory-request', 'view-lab-operations', 'view-manager-dashboard', 'view-my-profile'],
       'ROLE_LAB_MANAGER': ['view-manager-dashboard', 'view-my-profile'],
@@ -1019,97 +1131,150 @@
     function applyPermissions(roleEnum) {
       const allowedViews = rolePermissions[roleEnum] || ['view-my-profile'];
       let currentActiveViewStillAllowed = false;
-
-      // Iterate through the sidebar navigation links
       document.querySelectorAll('.nav-link').forEach(btn => {
         const targetView = btn.getAttribute('data-view');
-        
         if (allowedViews.includes(targetView)) {
-          btn.style.display = ''; // Show allowed nav links
-          if (btn.classList.contains('active')) {
-            currentActiveViewStillAllowed = true;
-          }
-        } else {
-          btn.style.display = 'none'; // Hide unauthorized nav links
-        }
+          btn.style.display = ''; if (btn.classList.contains('active')) currentActiveViewStillAllowed = true;
+        } else btn.style.display = 'none';
       });
-
-      // Security check: If the user's current view is no longer allowed, kick them to Profile
-      if (!currentActiveViewStillAllowed) {
-        goToProfile();
-      }
+      if (!currentActiveViewStillAllowed) goToProfile();
     }
-
-    // Initialize permissions on load based on default role (System Admin)
     applyPermissions('ROLE_SYSADMIN');
 
     // 13. Approval Workflow Logic
     function approveRequest(btn) {
       const row = btn.closest('tr');
       
-      // 1. Alert user
+      const wafers = Array.from(row.cells[1].querySelectorAll('span')).map(span => span.innerText);
+      const exps = Array.from(row.cells[2].querySelectorAll('span')).map(span => {
+        return { key: span.getAttribute('data-i18n'), text: span.innerText };
+      });
+      
+      const priorityVal = row.getAttribute('data-priority') || 'NORMAL';
+      const priorityBadgeHtml = getPriorityBadgeHtml(priorityVal);
+
+      const wipBody = document.getElementById('wip-queue-body');
+      if (wipBody) {
+        wafers.forEach(waferId => {
+          const wipRow = document.createElement('tr');
+          wipRow.className = "hover:bg-slate-50 transition-colors";
+          const expHtml = exps.map(e => `<span data-i18n="${e.key}">${e.text}</span>`).join(', ');
+
+          wipRow.innerHTML = `
+            <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
+            <td class="px-6 py-4 font-mono font-bold">${waferId}</td>
+            <td class="px-6 py-4 text-xs text-slate-500">${expHtml}</td>
+            <td class="px-6 py-4">${priorityBadgeHtml}</td>
+          `;
+          wipBody.insertBefore(wipRow, wipBody.firstChild);
+        });
+      }
+
+      addNotification('notif_req_appr', 'Request Approved', `Wafers have been dispatched to WIP sorting.`, 'success');
       alert(currentAppLang === 'en' ? 
         "✅ Capacity check passed. Request approved!\n\nThe wafers have been dispatched to Lab Operations (WIP Sorting)." : 
-        "✅ 產能檢核通過！委託單已核准。\n\n晶圓已同步派發至實驗室的待分貨區 (WIP)。");
+        "✅ 產能檢核通過！委託單已核准。\n\n晶圓已同步拆解並派發至實驗室的待分貨區 (WIP)。");
       
-      // 2. Animate and remove the row from Manager queue
-      row.style.transition = 'all 0.4s ease';
-      row.style.opacity = '0';
+      row.style.transition = 'all 0.4s ease'; 
+      row.style.opacity = '0'; 
       row.style.transform = 'translateX(20px)';
-      
-      setTimeout(() => {
-        row.remove();
-        checkEmptyQueue();
+      setTimeout(() => { 
+        row.remove(); 
+        checkEmptyQueue(); 
+        updatePendingCounter();
       }, 400);
-
-      // (In a real app, an API call would move the data to View 2 here)
     }
 
     function rejectRequest(btn) {
       const row = btn.closest('tr');
-      
-      // 1. Prompt for reason (Mandatory)
-      const reason = prompt(currentAppLang === 'en' ? 
-        "Please enter the reason for rejection (e.g., Insufficient machine capacity):" : 
-        "請輸入退件原因 (例如：機台產能不足)：");
-      
-      // 2. Validate input
+      const reason = prompt(currentAppLang === 'en' ? "Please enter the reason for rejection:" : "請輸入退件原因：");
       if (reason !== null && reason.trim() !== "") {
-        alert(currentAppLang === 'en' ? 
-          `❌ Request rejected and returned to Fab.\n\nReason: ${reason}` : 
-          `❌ 委託單已退回廠區。\n\n退件原因：${reason}`);
-          
-        // Animate and remove
-        row.style.transition = 'all 0.4s ease';
-        row.style.opacity = '0';
-        row.style.transform = 'translateX(20px)';
-        
-        setTimeout(() => {
-          row.remove();
-          checkEmptyQueue();
+        alert(currentAppLang === 'en' ? `❌ Request rejected.\n\nReason: ${reason}` : `❌ 委託單已退回。\n\n退件原因：${reason}`);
+        row.style.transition = 'all 0.4s ease'; row.style.opacity = '0'; row.style.transform = 'translateX(20px)';
+        setTimeout(() => { 
+          row.remove(); 
+          checkEmptyQueue(); 
+          updatePendingCounter();
         }, 400);
-      } else if (reason !== null) {
-        // User clicked OK but left it blank
-        alert(currentAppLang === 'en' ? "Rejection reason is mandatory." : "退件原因為必填項目。");
-      }
+      } else if (reason !== null) alert(currentAppLang === 'en' ? "Rejection reason is mandatory." : "退件原因為必填項目。");
     }
 
-    // Helper to show empty state if queue is cleared
     function checkEmptyQueue() {
       const tbody = document.getElementById('approval-queue-body');
       if (tbody.children.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4" class="px-6 py-12 text-center text-slate-400">
-              <span class="material-symbols-outlined text-4xl mb-2 opacity-50">task_alt</span>
-              <p class="font-bold text-sm" data-i18n="queue_empty">Queue is empty. All caught up!</p>
-            </td>
-          </tr>
-        `;
-        // Trigger translation for the newly injected element
+        tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-6 py-12 text-center text-slate-400\"><span class=\"material-symbols-outlined text-4xl mb-2 opacity-50\">task_alt</span><p class=\"font-bold text-sm\" data-i18n=\"queue_empty\">Queue is empty. All caught up!</p></td></tr>`;
         setLanguage(currentAppLang); 
       }
     }
+
+    function updatePendingCounter() {
+      const tbody = document.getElementById('approval-queue-body');
+      const counter = document.getElementById('pending-number');
+      if (!tbody || !counter) return;
+      const rows = tbody.querySelectorAll('tr');
+      let count = rows.length;
+      if (count === 1 && rows[0].querySelector('td[colspan="5"]')) count = 0;
+      counter.innerText = count;
+    }
+
+    function viewMessage(msg) {
+      alert(currentAppLang === 'en' ? `Message from Requester:\n\n${msg}` : `來自申請人的備註訊息：\n\n${msg}`);
+    }
+
+    // 16. Lab Operations: WIP Handling & Select All
+    function updateWipCount() {
+      const checkboxes = document.querySelectorAll('.wip-checkbox');
+      const checkedWips = document.querySelectorAll('.wip-checkbox:checked');
+      const count = checkedWips.length;
+      const display = document.getElementById('selected-wip-count');
+      if(display) {
+          display.innerText = currentAppLang === 'en' ? `${count} Wafers Selected` : `已選擇 ${count} 片晶圓`;
+      }
+
+      const selectAllWip = document.getElementById('selectAllWip');
+      if (selectAllWip && checkboxes.length > 0) {
+        selectAllWip.checked = (count === checkboxes.length);
+        selectAllWip.indeterminate = (count > 0 && count < checkboxes.length);
+      } else if (selectAllWip) {
+        selectAllWip.checked = false;
+        selectAllWip.indeterminate = false;
+      }
+    }
+
+    const selectAllWip = document.getElementById('selectAllWip');
+    if (selectAllWip) {
+      selectAllWip.addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.wip-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateWipCount();
+      });
+    }
+
+    document.getElementById('wip-queue-body')?.addEventListener('change', function(e) {
+      if(e.target && e.target.classList.contains('wip-checkbox')) {
+        updateWipCount();
+      }
+    });
+
+    function executeDispatch() {
+      const checkedWips = document.querySelectorAll('.wip-checkbox:checked');
+      if(checkedWips.length === 0) {
+         alert(currentAppLang === 'en' ? "Please select at least one wafer to dispatch." : "請至少選擇一片晶圓進行派發。");
+         return;
+      }
+      alert(currentAppLang === 'en' ? `✅ Successfully dispatched ${checkedWips.length} wafers to the machine!` : `✅ 成功派發 ${checkedWips.length} 片晶圓至機台！`);
+      
+      checkedWips.forEach(cb => {
+         const row = cb.closest('tr');
+         row.style.transition = 'all 0.4s ease'; row.style.opacity = '0'; row.style.transform = 'translateX(20px)';
+         setTimeout(() => row.remove(), 400);
+      });
+      setTimeout(updateWipCount, 450);
+    }
+
+    // Initialize counters on load
+    updatePendingCounter();
+    updateWipCount();
   </script>
 </body>
 </html>
