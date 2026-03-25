@@ -1,4 +1,4 @@
-# Cloud-Native Laboratory Information Management System (LIMS) ?
+# Cloud-Native Laboratory Information Management System (LIMS) 🔬
 
 ![Version](https://img.shields.io/badge/version-1.0.0--prototype-blue.svg)
 ![Tech Stack](https://img.shields.io/badge/Tech-HTML5%20%7C%20TailwindCSS%20%7C%20Vanilla%20JS-emerald.svg)
@@ -6,14 +6,14 @@
 
 A high-fidelity, interactive frontend prototype for a Cloud-Native Laboratory Information Management System. This project is meticulously designed to align with enterprise-level semiconductor lab operations, providing seamless workflows from request submission to machine dispatching.
 
-## ? Executive Summary
+## 🌟 Executive Summary
 
 In semiconductor R&D and manufacturing, quality control relies heavily on specialized laboratories. This LIMS prototype streamlines the entire lifecycle of wafer testing:
 1. **Fab Users** submit detailed experiment requests.
 2. **Lab Managers** perform capacity checks and approve requests.
 3. **Lab Operators** manage WIP (Work-in-Progress) sorting and dispatch wafers to specific testing machines.
 
-## ? Core Features
+## ✨ Core Features
 
 ### 1. End-to-End Workflow Integration
 * **Fab Request (Order Creation):** Iterative Wafer ID input with strictly enforced regex validation (`W-XXXX`). Supports multi-select experiments and priority assignment.
@@ -34,14 +34,14 @@ In semiconductor R&D and manufacturing, quality control relies heavily on specia
 * **i18n Localization:** Instant switching between English (EN) and Traditional Chinese (TW) without page reloads.
 * **Notification Center:** Dynamic alert system with unread counters and interactive dismissals.
 
-## ?? Technology Stack
+## 🛠️ Technology Stack
 
 * **Frontend:** HTML5, Tailwind CSS (via CDN for rapid prototyping)
 * **Scripting:** Vanilla JavaScript (ES6+)
 * **Icons & Typography:** Google Material Symbols, Public Sans Font
 * **Deployment:** GitHub Pages (Zero-build-step architecture)
 
-## ? Getting Started
+## 🚀 Getting Started
 
 Since this is a pure frontend prototype, no complex build tools or dependencies are required.
 
