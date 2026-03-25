@@ -43,7 +43,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
 
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: #94a3b8; }
@@ -51,27 +51,31 @@
 </head>
 <body class="h-full overflow-hidden flex flex-col text-slate-800">
 
-  <header class="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shadow-sm relative">
-    <div class="flex items-center gap-2">
-      <div class="bg-corporate-blue p-2 rounded-lg text-white">
-        <span class="material-symbols-outlined">science</span>
+  <header class="sticky top-0 z-50 bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between shadow-sm relative">
+    <div class="flex items-center gap-2 md:gap-3">
+      <button id="mobile-menu-btn" class="md:hidden p-1.5 -ml-1 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none">
+        <span class="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+      
+      <div class="bg-corporate-blue p-1.5 md:p-2 rounded-lg text-white flex items-center justify-center">
+        <span class="material-symbols-outlined text-[20px] md:text-[24px]">science</span>
       </div>
-      <span class="text-xl font-bold tracking-tight">LIMS <span class="text-corporate-blue font-normal">Cloud-Native</span></span>
+      <span class="text-lg md:text-xl font-bold tracking-tight hidden sm:block">LIMS <span class="text-corporate-blue font-normal">Cloud-Native</span></span>
     </div>
     
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-3 md:gap-6">
       <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-semibold">
-        <button id="btn-lang-en" onclick="setLanguage('en')" class="px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all">EN</button>
-        <button id="btn-lang-tw" onclick="setLanguage('tw')" class="px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all">中文</button>
+        <button id="btn-lang-en" onclick="setLanguage('en')" class="px-2 md:px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all">EN</button>
+        <button id="btn-lang-tw" onclick="setLanguage('tw')" class="px-2 md:px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all">中文</button>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 md:gap-4">
         <div class="relative">
-          <button id="bell-btn" class="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors focus:outline-none">
-            <span class="material-symbols-outlined">notifications</span>
-            <span id="notif-badge" class="hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          <button id="bell-btn" class="relative p-1.5 md:p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors focus:outline-none">
+            <span class="material-symbols-outlined text-[20px] md:text-[24px]">notifications</span>
+            <span id="notif-badge" class="hidden absolute top-1 md:top-2 right-1 md:right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
           </button>
-          <div id="notif-panel" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 transform origin-top-right transition-all shadow-lg">
+          <div id="notif-panel" class="hidden absolute right-0 mt-2 w-[280px] md:w-80 glass-panel rounded-2xl p-4 z-50 transform origin-top-right transition-all shadow-lg">
             <div class="flex justify-between items-center mb-3 px-1">
               <h3 class="text-sm font-bold text-slate-800" data-i18n="sys_notif">System Notifications</h3>
               <span id="notif-count-text" class="hidden text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full shadow-sm">0 New</span>
@@ -93,21 +97,29 @@
           </div>
         </div>
 
-        <div class="h-8 w-px bg-slate-200"></div>
+        <div class="h-6 md:h-8 w-px bg-slate-200"></div>
 
-        <div onclick="goToProfile()" class="flex items-center gap-3 cursor-pointer group pr-2">
+        <div onclick="goToProfile()" class="flex items-center gap-2 md:gap-3 cursor-pointer group pr-1 md:pr-2">
           <div class="text-right hidden sm:block">
             <p id="header-user-name" class="text-sm font-bold text-slate-900 group-hover:text-corporate-blue transition-colors">Jasper Li</p>
             <p id="header-user-role" class="text-xs text-slate-500" data-i18n="role_sysadmin">System Admin</p>
           </div>
-          <div id="header-user-initials" class="w-10 h-10 rounded-full bg-corporate-blue flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:shadow-md transition-all">JL</div>
+          <div id="header-user-initials" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-corporate-blue flex items-center justify-center text-white font-bold text-xs md:text-sm shadow-sm group-hover:shadow-md transition-all">JL</div>
         </div>
       </div>
     </div>
   </header>
 
-  <div class="flex flex-1 overflow-hidden">
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col p-4 space-y-2 overflow-y-auto">
+  <div class="flex flex-1 overflow-hidden relative">
+    
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden md:hidden transition-opacity"></div>
+
+    <aside id="sidebar" class="absolute inset-y-0 left-0 z-40 w-64 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col p-4 space-y-2 overflow-y-auto h-full">
+      <div class="md:hidden flex justify-end mb-2">
+        <button id="close-sidebar-btn" class="p-1 text-slate-400 hover:text-slate-600 focus:outline-none">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
       <nav class="space-y-1" id="sidebar-nav">
         <button class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all" data-view="view-factory-request">
           <span class="material-symbols-outlined">description</span> <span data-i18n="nav_fab">Fab Request</span>
@@ -124,17 +136,17 @@
       </nav>
     </aside>
 
-    <main class="flex-1 overflow-y-auto p-8" id="main-content">
+    <main class="flex-1 overflow-y-auto p-4 md:p-8" id="main-content">
       
-      <section class="view-content active max-w-4xl mx-auto space-y-8" id="view-factory-request">
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+      <section class="view-content active max-w-4xl mx-auto space-y-6 md:space-y-8" id="view-factory-request">
+        <div class="bg-white p-5 md:p-8 rounded-2xl shadow-sm border border-slate-100">
           <div class="mb-6 border-b border-slate-100 pb-4">
             <h1 class="text-xl font-bold" data-i18n="fab_title">Create New Request</h1>
             <p class="text-sm text-slate-500" data-i18n="fab_desc">Fine-grained experiment assignment per Wafer ID.</p>
           </div>
           <form class="space-y-6">
             
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="emp_id">Employee ID</label>
                 <input class="w-full rounded-xl border-slate-200 bg-slate-50 text-slate-500" value="#TS-0001" type="text" readonly>
@@ -151,20 +163,20 @@
 
             <div class="space-y-2">
               <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="select_exp">Select Experiment Items</label>
-              <div id="experimentContainer" class="flex flex-wrap gap-3"></div>
+              <div id="experimentContainer" class="flex flex-wrap gap-2 md:gap-3"></div>
             </div>
 
             <div class="space-y-2 p-4 bg-slate-50 rounded-xl border border-slate-200 relative">
               <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="iterative_wafer">Iterative Wafer ID Input</label>
-              <div class="flex gap-2">
+              <div class="flex flex-col sm:flex-row gap-2">
                 <input type="text" id="waferInput" class="flex-1 rounded-xl border-slate-300 focus:ring-corporate-blue transition-colors" placeholder="Scan or enter Wafer ID (e.g. W-1049)">
-                <button type="button" onclick="addWafer()" class="px-4 bg-white border border-slate-300 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors" data-i18n="add_wafer_btn">Add Wafer</button>
+                <button type="button" onclick="addWafer()" class="px-4 py-2.5 sm:py-0 bg-white border border-slate-300 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors" data-i18n="add_wafer_btn">Add Wafer</button>
               </div>
               <p id="waferErrorMsg" class="hidden text-xs text-red-500 font-bold mt-1" data-i18n="wafer_format_err">Invalid format. Must be W-XXXX (e.g., W-1049).</p>
               <div id="waferContainer" class="flex flex-wrap gap-2 mt-3"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div class="space-y-2">
                 <label class="text-xs font-bold text-slate-500 uppercase" data-i18n="priority">Priority</label>
                 <select id="prioritySelect" onchange="updatePriorityColor()" class="w-full rounded-xl border-slate-200 focus:ring-corporate-blue focus:border-corporate-blue font-bold text-emerald-700 bg-emerald-50 transition-colors">
@@ -185,63 +197,65 @@
           </form>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-8">
-          <div class="px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="my_req_prog">My Requests Progress</h2></div>
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px]">
-              <tr>
-                <th class="px-6 py-3" data-i18n="tbl_req_id">Req ID</th>
-                <th class="px-6 py-3" data-i18n="tbl_exp">Experiments</th>
-                <th class="px-6 py-3" data-i18n="tbl_wafers_cnt">Wafers Count</th>
-                <th class="px-6 py-3 text-right" data-i18n="tbl_status">Status</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50" id="my-requests-body">
-              <tr>
-                <td class="px-6 py-4 font-mono font-bold">REQ-C991</td>
-                <td class="px-6 py-4 text-xs text-slate-600"><span data-i18n="exp_bake">High-Temp Bake</span>, <span data-i18n="exp_etest">Electrical Test</span></td>
-                <td class="px-6 py-4">2</td>
-                <td class="px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mt-6 md:mt-8">
+          <div class="px-4 md:px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="my_req_prog">My Requests Progress</h2></div>
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left text-sm min-w-[500px]">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-[10px]">
+                <tr>
+                  <th class="px-4 md:px-6 py-3" data-i18n="tbl_req_id">Req ID</th>
+                  <th class="px-4 md:px-6 py-3" data-i18n="tbl_exp">Experiments</th>
+                  <th class="px-4 md:px-6 py-3" data-i18n="tbl_wafers_cnt">Wafers Count</th>
+                  <th class="px-4 md:px-6 py-3 text-right" data-i18n="tbl_status">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50" id="my-requests-body">
+                <tr>
+                  <td class="px-4 md:px-6 py-4 font-mono font-bold">REQ-C991</td>
+                  <td class="px-4 md:px-6 py-4 text-xs text-slate-600"><span data-i18n="exp_bake">High-Temp Bake</span>, <span data-i18n="exp_etest">Electrical Test</span></td>
+                  <td class="px-4 md:px-6 py-4">2</td>
+                  <td class="px-4 md:px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
-      <section class="view-content space-y-8" id="view-lab-operations">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <section class="view-content space-y-6 md:space-y-8" id="view-lab-operations">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           
           <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="wip_sorting">Pending Wafers for Sorting (WIP)</h2></div>
+            <div class="px-4 md:px-6 py-4 border-b border-slate-50"><h2 class="font-bold" data-i18n="wip_sorting">Pending Wafers for Sorting (WIP)</h2></div>
             <div class="overflow-x-auto overflow-y-auto max-h-[300px] flex-1 custom-scrollbar relative">
-              <table class="w-full text-left text-sm relative">
+              <table class="w-full text-left text-sm relative min-w-[500px]">
                 <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] sticky top-0 z-10 shadow-sm">
                   <tr>
-                    <th class="px-6 py-3 w-10"><input type="checkbox" id="selectAllWip" class="rounded text-corporate-blue focus:ring-corporate-blue"></th>
-                    <th class="px-6 py-3" data-i18n="tbl_wafer_id">Wafer ID</th>
-                    <th class="px-6 py-3" data-i18n="tbl_req_exp">Required Exp.</th>
-                    <th class="px-6 py-3" data-i18n="priority">Priority</th>
+                    <th class="px-4 md:px-6 py-3 w-10"><input type="checkbox" id="selectAllWip" class="rounded text-corporate-blue focus:ring-corporate-blue"></th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="tbl_wafer_id">Wafer ID</th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="tbl_req_exp">Required Exp.</th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="priority">Priority</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50" id="wip-queue-body">
                   <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
-                    <td class="px-6 py-4 font-mono font-bold">W-8821</td>
-                    <td class="px-6 py-4 text-xs text-slate-500" data-i18n="exp_bake">High-Temp Bake</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_urgent">Urgent</span></td>
+                    <td class="px-4 md:px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
+                    <td class="px-4 md:px-6 py-4 font-mono font-bold">W-8821</td>
+                    <td class="px-4 md:px-6 py-4 text-xs text-slate-500" data-i18n="exp_bake">High-Temp Bake</td>
+                    <td class="px-4 md:px-6 py-4"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_urgent">Urgent</span></td>
                   </tr>
                   <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
-                    <td class="px-6 py-4 font-mono font-bold">W-9005</td>
-                    <td class="px-6 py-4 text-xs text-slate-500" data-i18n="exp_etest">Electrical Test</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_normal">Normal</span></td>
+                    <td class="px-4 md:px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
+                    <td class="px-4 md:px-6 py-4 font-mono font-bold">W-9005</td>
+                    <td class="px-4 md:px-6 py-4 text-xs text-slate-500" data-i18n="exp_etest">Electrical Test</td>
+                    <td class="px-4 md:px-6 py-4"><span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="pri_normal">Normal</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
           
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-100">
             <h2 class="font-bold mb-6" data-i18n="dispatch_title">Dispatch to Machine</h2>
             <div class="space-y-4">
               <div class="space-y-1">
@@ -278,21 +292,21 @@
         </div>
 
         <div>
-          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4 mt-8">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 mt-6 md:mt-8">
             <h2 class="font-bold text-lg" data-i18n="fsm_title">Machine Management (FSM)</h2>
-            <div class="flex gap-2">
-              <button onclick="dummyAlert('Manage Machines')" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="dummyAlert('Manage Machines')" class="flex-1 sm:flex-none px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-1">
                 <span class="material-symbols-outlined text-[16px]">settings</span>
                 <span data-i18n="btn_manage_mach">Manage Machines</span>
               </button>
-              <button onclick="dummyAlert('Manage Recipes')" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1">
+              <button onclick="dummyAlert('Manage Recipes')" class="flex-1 sm:flex-none px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-1">
                 <span class="material-symbols-outlined text-[16px]">list_alt</span>
                 <span data-i18n="btn_manage_recipe">Manage Recipes</span>
               </button>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] relative overflow-hidden flex flex-col">
               <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse"></div>
               <div class="flex justify-between items-start mb-2">
@@ -417,30 +431,30 @@
       </section>
 
       <section class="view-content mx-auto max-w-7xl" id="view-manager-dashboard">
-        <div class="grid grid-cols-1 gap-8">
+        <div class="grid grid-cols-1 gap-6 md:gap-8">
           
           <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
-            <div class="px-6 py-4 border-b border-slate-50 flex justify-between items-center">
-              <h2 class="font-bold text-lg text-slate-900" data-i18n="mgr_approval">Approval Queue (Capacity Check Required)</h2>
-              <span class="px-3 py-1 bg-corporate-blue/10 text-corporate-blue text-xs font-bold rounded-full uppercase flex items-center gap-1">
+            <div class="px-4 md:px-6 py-4 border-b border-slate-50 flex justify-between items-center">
+              <h2 class="font-bold text-base md:text-lg text-slate-900" data-i18n="mgr_approval">Approval Queue (Capacity Check Required)</h2>
+              <span class="px-3 py-1 bg-corporate-blue/10 text-corporate-blue text-[10px] md:text-xs font-bold rounded-full uppercase flex items-center gap-1 shrink-0">
                 <span id="pending-number">1</span> 
-                <span data-i18n="lbl_pending">PENDING</span>
+                <span data-i18n="lbl_pending" class="hidden sm:inline">PENDING</span>
               </span>
             </div>
-            <div class="overflow-x-auto flex-1">
-              <table class="w-full text-left text-sm">
+            <div class="overflow-x-auto custom-scrollbar flex-1">
+              <table class="w-full text-left text-sm min-w-[700px]">
                 <thead class="bg-slate-50 text-slate-500 uppercase text-[10px]">
                   <tr>
-                    <th class="px-6 py-3" data-i18n="tbl_reqster">Requester</th>
-                    <th class="px-6 py-3" data-i18n="tbl_w_ids">Wafer IDs</th>
-                    <th class="px-6 py-3" data-i18n="tbl_exp">Experiments</th>
-                    <th class="px-6 py-3 text-center" data-i18n="tbl_msg">Message</th>
-                    <th class="px-6 py-3 text-right" data-i18n="tbl_action">Action</th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="tbl_reqster">Requester</th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="tbl_w_ids">Wafer IDs</th>
+                    <th class="px-4 md:px-6 py-3" data-i18n="tbl_exp">Experiments</th>
+                    <th class="px-4 md:px-6 py-3 text-center" data-i18n="tbl_msg">Message</th>
+                    <th class="px-4 md:px-6 py-3 text-right" data-i18n="tbl_action">Action</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50" id="approval-queue-body">
                   <tr class="hover:bg-slate-50 transition-colors" data-priority="NORMAL">
-                    <td class="px-6 py-4">
+                    <td class="px-4 md:px-6 py-4">
                       <div class="flex items-center gap-3">
                         <div class="w-9 h-9 shrink-0 rounded-full bg-slate-300 text-slate-700 text-xs font-bold flex items-center justify-center shadow-sm">SW</div>
                         <div class="whitespace-nowrap">
@@ -452,26 +466,26 @@
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 md:px-6 py-4">
                       <div class="flex flex-wrap gap-1.5 max-w-full">
                         <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-101</span>
                         <span class="px-2.5 py-1 bg-blue-50 text-corporate-blue text-[11px] font-bold rounded-lg border border-blue-100">W-102</span>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-4 md:px-6 py-4">
                       <div class="flex flex-wrap gap-1.5 max-w-full">
                         <span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200" data-i18n="exp_bake">High-Temp Bake</span>
                         <span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200" data-i18n="exp_etest">Electrical Test</span>
                       </div>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-4 md:px-6 py-4 text-center">
                       <button onclick="viewMessage('Please process W-101 carefully, extremely fragile.')" class="p-1.5 text-corporate-blue hover:bg-blue-50 rounded-lg transition-colors" title="View Message">
                         <span class="material-symbols-outlined text-[18px]">chat</span>
                       </button>
                     </td>
-                    <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
-                      <button onclick="approveRequest(this)" class="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
-                      <button onclick="rejectRequest(this)" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
+                    <td class="px-4 md:px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
+                      <button onclick="approveRequest(this)" class="px-3 md:px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
+                      <button onclick="rejectRequest(this)" class="px-3 md:px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
                     </td>
                   </tr>
                 </tbody>
@@ -479,85 +493,87 @@
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
-            <div class="flex justify-between items-end mb-8">
-              <h2 class="font-bold text-lg text-slate-900" data-i18n="mgr_idle_chart">Machine Idle Time (Weekly)</h2>
-              <div class="text-right">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wide" data-i18n="avg_util">Avg Utilization</p>
-                <p class="text-3xl font-bold text-emerald-500 leading-none mt-1.5">68.5%</p>
+          <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+            <div class="flex justify-between items-end mb-6 md:mb-8">
+              <h2 class="font-bold text-base md:text-lg text-slate-900" data-i18n="mgr_idle_chart">Machine Idle Time (Weekly)</h2>
+              <div class="text-right shrink-0 ml-4">
+                <p class="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-wide" data-i18n="avg_util">Avg Utilization</p>
+                <p class="text-2xl md:text-3xl font-bold text-emerald-500 leading-none mt-1 md:mt-1.5">68.5%</p>
               </div>
             </div>
             
-            <div class="relative pt-2 pb-8 flex-1 flex flex-col justify-around border-b border-slate-100">
-              <div class="absolute inset-0 flex justify-between pl-28 pr-14 pb-8 pointer-events-none">
-                <div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div>
-              </div>
-              <style>
-                @keyframes expandBar { from { width: 0; } }
-                .chart-bar { animation: expandBar 1s ease-out; }
-              </style>
-              
-              <div class="relative z-10 flex items-center gap-4">
-                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">SEM-01</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[10%] bg-slate-200 border-r border-slate-300/30"></div>
-                  <div class="w-[50%] bg-emerald-400 chart-bar"></div>
+            <div class="overflow-x-auto custom-scrollbar pb-4">
+              <div class="min-w-[600px] relative pt-2 pb-8 flex-1 flex flex-col justify-around border-b border-slate-100">
+                <div class="absolute inset-0 flex justify-between pl-24 md:pl-28 pr-12 md:pr-14 pb-8 pointer-events-none">
+                  <div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">90%</div>
-              </div>
-              
-              <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">BAKE-OVEN-01</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[55%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[45%] bg-slate-200"></div>
+                <style>
+                  @keyframes expandBar { from { width: 0; } }
+                  .chart-bar { animation: expandBar 1s ease-out; }
+                </style>
+                
+                <div class="relative z-10 flex items-center gap-2 md:gap-4">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-slate-600 text-right whitespace-nowrap">SEM-01</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                    <div class="w-[10%] bg-slate-200 border-r border-slate-300/30"></div>
+                    <div class="w-[50%] bg-emerald-400 chart-bar"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-slate-400 text-right">90%</div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">55%</div>
-              </div>
-              
-              <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-24 shrink-0 text-xs font-bold text-red-600 text-right whitespace-nowrap">TEM-01</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[15%] bg-red-400 chart-bar"></div>
-                  <div class="w-[85%] bg-slate-200"></div>
+                
+                <div class="relative z-10 flex items-center gap-2 md:gap-4 mt-4 md:mt-5">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-slate-600 text-right whitespace-nowrap">BAKE-OVEN-01</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[55%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                    <div class="w-[45%] bg-slate-200"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-slate-400 text-right">55%</div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-red-400 text-right">0%</div>
-              </div>
+                
+                <div class="relative z-10 flex items-center gap-2 md:gap-4 mt-4 md:mt-5">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-red-600 text-right whitespace-nowrap">TEM-01</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[15%] bg-red-400 chart-bar"></div>
+                    <div class="w-[85%] bg-slate-200"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-red-400 text-right">0%</div>
+                </div>
 
-              <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">FIB-01</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[60%] bg-slate-200"></div>
+                <div class="relative z-10 flex items-center gap-2 md:gap-4 mt-4 md:mt-5">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-slate-600 text-right whitespace-nowrap">FIB-01</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[40%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                    <div class="w-[60%] bg-slate-200"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-slate-400 text-right">40%</div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">40%</div>
-              </div>
 
-              <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">E-TEST-02</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[85%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[15%] bg-slate-200"></div>
+                <div class="relative z-10 flex items-center gap-2 md:gap-4 mt-4 md:mt-5">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-slate-600 text-right whitespace-nowrap">E-TEST-02</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[85%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                    <div class="w-[15%] bg-slate-200"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-slate-400 text-right">85%</div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">85%</div>
-              </div>
 
-              <div class="relative z-10 flex items-center gap-4 mt-5">
-                <div class="w-24 shrink-0 text-xs font-bold text-slate-600 text-right whitespace-nowrap">XRD-01</div>
-                <div class="flex-1 h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
-                  <div class="w-[65%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
-                  <div class="w-[35%] bg-slate-200"></div>
+                <div class="relative z-10 flex items-center gap-2 md:gap-4 mt-4 md:mt-5">
+                  <div class="w-20 md:w-24 shrink-0 text-[10px] md:text-xs font-bold text-slate-600 text-right whitespace-nowrap">XRD-01</div>
+                  <div class="flex-1 h-4 md:h-5 rounded bg-slate-100 flex overflow-hidden shadow-inner">
+                    <div class="w-[65%] bg-emerald-400 border-r border-emerald-500/30 chart-bar"></div>
+                    <div class="w-[35%] bg-slate-200"></div>
+                  </div>
+                  <div class="w-8 md:w-10 shrink-0 text-[10px] md:text-[11px] font-bold text-slate-400 text-right">65%</div>
                 </div>
-                <div class="w-10 shrink-0 text-[11px] font-bold text-slate-400 text-right">65%</div>
-              </div>
 
-              <div class="absolute bottom-0 left-0 w-full flex justify-between pl-28 pr-14 text-[10px] font-bold text-slate-400 uppercase transform translate-y-3">
-                <span data-i18n="day_mon">Mon</span><span data-i18n="day_tue">Tue</span><span data-i18n="day_wed">Wed</span><span data-i18n="day_thu">Thu</span><span data-i18n="day_fri">Fri</span>
+                <div class="absolute bottom-0 left-0 w-full flex justify-between pl-24 md:pl-28 pr-12 md:pr-14 text-[10px] font-bold text-slate-400 uppercase transform translate-y-3">
+                  <span data-i18n="day_mon">Mon</span><span data-i18n="day_tue">Tue</span><span data-i18n="day_wed">Wed</span><span data-i18n="day_thu">Thu</span><span data-i18n="day_fri">Fri</span>
+                </div>
               </div>
             </div>
             
-            <div class="mt-8 flex gap-6 text-[10px] font-bold text-slate-500 justify-center">
+            <div class="mt-4 md:mt-6 flex flex-wrap gap-4 md:gap-6 text-[10px] font-bold text-slate-500 justify-center">
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-emerald-400"></span> <span data-i18n="fsm_proc">RUNNING</span></span>
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-slate-200"></span> <span data-i18n="fsm_idle">IDLE</span></span>
               <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-red-400"></span> <span data-i18n="fsm_alarm">ALARM</span></span>
@@ -567,32 +583,32 @@
       </section>
 
       <section class="view-content" id="view-my-profile">
-        <div class="max-w-6xl mx-auto space-y-8">
+        <div class="max-w-6xl mx-auto space-y-6 md:space-y-8">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 class="text-3xl font-bold tracking-tight text-slate-900" data-i18n="prof_title">User Profile</h2>
-              <p class="text-slate-500 mt-1" data-i18n="prof_desc">Manage your personal information and security settings.</p>
+              <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900" data-i18n="prof_title">User Profile</h2>
+              <p class="text-xs md:text-sm text-slate-500 mt-1" data-i18n="prof_desc">Manage your personal information and security settings.</p>
             </div>
-            <div class="flex items-center gap-3">
-              <button onclick="dummyAlert('Export Logs')" class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors" data-i18n="btn_exp_logs">Export Logs</button>
-              <button onclick="saveProfile()" class="rounded-2xl bg-corporate-blue px-6 py-2 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors" data-i18n="btn_save">Save Changes</button>
+            <div class="flex items-center gap-2 md:gap-3">
+              <button onclick="dummyAlert('Export Logs')" class="rounded-lg border border-slate-200 bg-white px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors" data-i18n="btn_exp_logs">Export Logs</button>
+              <button onclick="saveProfile()" class="rounded-xl md:rounded-2xl bg-corporate-blue px-4 md:px-6 py-2 text-xs md:text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors" data-i18n="btn_save">Save Changes</button>
             </div>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             <div class="lg:col-span-1 space-y-6">
-              <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                <div class="relative mx-auto mb-6 h-32 w-32">
-                  <div id="card-user-initials" class="h-full w-full overflow-hidden rounded-xl border-4 border-slate-100 bg-corporate-blue flex items-center justify-center text-white font-bold text-5xl">JL</div>
-                  <button onclick="dummyAlert('Update Avatar')" class="absolute -bottom-2 -right-2 rounded-full bg-accent-sky p-2 text-white shadow-lg"><span class="material-symbols-outlined text-lg">photo_camera</span></button>
+              <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 text-center shadow-sm">
+                <div class="relative mx-auto mb-4 md:mb-6 h-24 w-24 md:h-32 md:w-32">
+                  <div id="card-user-initials" class="h-full w-full overflow-hidden rounded-xl border-4 border-slate-100 bg-corporate-blue flex items-center justify-center text-white font-bold text-3xl md:text-5xl">JL</div>
+                  <button onclick="dummyAlert('Update Avatar')" class="absolute -bottom-2 -right-2 rounded-full bg-accent-sky p-1.5 md:p-2 text-white shadow-lg"><span class="material-symbols-outlined text-base md:text-lg">photo_camera</span></button>
                 </div>
-                <h3 id="card-user-name" class="text-xl font-bold text-slate-900">Jasper Li</h3>
-                <p id="card-user-role" class="text-accent-sky font-semibold text-sm" data-i18n="role_sysadmin">System Admin</p>
-                <div class="mt-6 flex flex-col gap-2 border-t border-slate-100 pt-6">
-                  <div class="flex justify-between text-sm">
+                <h3 id="card-user-name" class="text-lg md:text-xl font-bold text-slate-900">Jasper Li</h3>
+                <p id="card-user-role" class="text-accent-sky font-semibold text-xs md:text-sm" data-i18n="role_sysadmin">System Admin</p>
+                <div class="mt-4 md:mt-6 flex flex-col gap-2 border-t border-slate-100 pt-4 md:pt-6">
+                  <div class="flex justify-between text-xs md:text-sm">
                     <span class="text-slate-500" data-i18n="emp_id">Employee ID</span>
                     <span class="font-medium text-slate-900">#TS-0001</span>
                   </div>
-                  <div class="flex justify-between text-sm">
+                  <div class="flex justify-between text-xs md:text-sm">
                     <span class="text-slate-500" data-i18n="status">Status</span>
                     <span class="inline-flex items-center gap-1.5 font-medium text-emerald-600">
                       <span class="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
@@ -601,21 +617,21 @@
                   </div>
                 </div>
               </div>
-              <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h4 class="font-bold mb-4 flex items-center gap-2 text-slate-800">
+              <div class="rounded-2xl border border-slate-200 bg-white p-5 md:p-6 shadow-sm">
+                <h4 class="font-bold mb-3 md:mb-4 flex items-center gap-2 text-slate-800 text-sm md:text-base">
                   <span class="material-symbols-outlined text-accent-sky">verified_user</span>
                   <span data-i18n="sys_priv">System Privileges</span>
                 </h4>
-                <ul class="space-y-3">
-                  <li class="flex items-center gap-3 text-sm text-slate-600">
+                <ul class="space-y-2.5 md:space-y-3">
+                  <li class="flex items-center gap-3 text-xs md:text-sm text-slate-600">
                     <span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
                     <span data-i18n="priv_lab">Full Laboratory Access</span>
                   </li>
-                  <li class="flex items-center gap-3 text-sm text-slate-600">
+                  <li class="flex items-center gap-3 text-xs md:text-sm text-slate-600">
                     <span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
                     <span data-i18n="priv_inv">Inventory Management</span>
                   </li>
-                  <li class="flex items-center gap-3 text-sm text-slate-600">
+                  <li class="flex items-center gap-3 text-xs md:text-sm text-slate-600">
                     <span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
                     <span data-i18n="priv_uac">User Access Control (UAC)</span>
                   </li>
@@ -623,27 +639,27 @@
               </div>
             </div>
             
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 space-y-6 md:space-y-8">
               <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div class="border-b border-slate-100 bg-slate-50/50 px-8 py-4">
-                  <h3 class="font-bold text-lg text-slate-800" data-i18n="pers_info">Personal Information</h3>
+                <div class="border-b border-slate-100 bg-slate-50/50 px-5 md:px-8 py-3 md:py-4">
+                  <h3 class="font-bold text-base md:text-lg text-slate-800" data-i18n="pers_info">Personal Information</h3>
                 </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-slate-500" data-i18n="full_name">Full Name</label>
-                    <input id="input-user-name" class="w-full rounded-lg border-slate-200 bg-transparent py-2.5 focus:border-corporate-blue focus:ring-corporate-blue" type="text" value="Jasper Li">
+                <div class="p-5 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                  <div class="space-y-1 md:space-y-2">
+                    <label class="text-xs md:text-sm font-semibold text-slate-500" data-i18n="full_name">Full Name</label>
+                    <input id="input-user-name" class="w-full rounded-lg border-slate-200 bg-transparent py-2 md:py-2.5 text-sm md:text-base focus:border-corporate-blue focus:ring-corporate-blue" type="text" value="Jasper Li">
                   </div>
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-slate-500" data-i18n="email_addr">Email Address</label>
-                    <input class="w-full rounded-lg border-slate-200 bg-transparent py-2.5 focus:border-corporate-blue focus:ring-corporate-blue" type="email" value="jasper@tsmc.com">
+                  <div class="space-y-1 md:space-y-2">
+                    <label class="text-xs md:text-sm font-semibold text-slate-500" data-i18n="email_addr">Email Address</label>
+                    <input class="w-full rounded-lg border-slate-200 bg-transparent py-2 md:py-2.5 text-sm md:text-base focus:border-corporate-blue focus:ring-corporate-blue" type="email" value="jasper@tsmc.com">
                   </div>
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-slate-500" data-i18n="dept">Department</label>
-                    <input class="w-full rounded-lg border-slate-200 bg-transparent py-2.5 focus:border-corporate-blue focus:ring-corporate-blue" type="text" value="IT">
+                  <div class="space-y-1 md:space-y-2">
+                    <label class="text-xs md:text-sm font-semibold text-slate-500" data-i18n="dept">Department</label>
+                    <input class="w-full rounded-lg border-slate-200 bg-transparent py-2 md:py-2.5 text-sm md:text-base focus:border-corporate-blue focus:ring-corporate-blue" type="text" value="IT">
                   </div>
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-slate-500" data-i18n="prim_role">Primary Role</label>
-                    <select id="input-user-role" class="w-full rounded-lg border-slate-200 bg-transparent py-2.5 pr-10 focus:border-corporate-blue focus:ring-corporate-blue cursor-pointer">
+                  <div class="space-y-1 md:space-y-2">
+                    <label class="text-xs md:text-sm font-semibold text-slate-500" data-i18n="prim_role">Primary Role</label>
+                    <select id="input-user-role" class="w-full rounded-lg border-slate-200 bg-transparent py-2 md:py-2.5 text-sm md:text-base pr-10 focus:border-corporate-blue focus:ring-corporate-blue cursor-pointer">
                       <option value="ROLE_SYSADMIN" data-i18n="role_sysadmin" selected>System Admin</option>
                       <option value="ROLE_LAB_MANAGER" data-i18n="role_labsup">Lab Supervisor</option>
                       <option value="ROLE_LAB_OPERATOR" data-i18n="role_lab_operator">Lab Operator</option>
@@ -657,47 +673,47 @@
               </section>
               
               <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div class="border-b border-slate-100 bg-slate-50/50 px-8 py-4">
-                  <h3 class="font-bold text-lg text-slate-800" data-i18n="sec_settings">Security Settings</h3>
+                <div class="border-b border-slate-100 bg-slate-50/50 px-5 md:px-8 py-3 md:py-4">
+                  <h3 class="font-bold text-base md:text-lg text-slate-800" data-i18n="sec_settings">Security Settings</h3>
                 </div>
-                <div class="p-8 space-y-8">
-                  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="p-5 md:p-8 space-y-6 md:space-y-8">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4">
                     <div>
-                      <h4 class="font-bold text-slate-900" data-i18n="acc_pwd">Account Password</h4>
-                      <p class="text-sm text-slate-500" data-i18n="pwd_desc">Last changed: 3 months ago. We recommend updating regularly.</p>
+                      <h4 class="font-bold text-sm md:text-base text-slate-900" data-i18n="acc_pwd">Account Password</h4>
+                      <p class="text-xs md:text-sm text-slate-500" data-i18n="pwd_desc">Last changed: 3 months ago. We recommend updating regularly.</p>
                     </div>
-                    <button onclick="dummyAlert('Change Password')" class="rounded-lg border border-accent-sky/20 bg-[#e0f2fe] px-4 py-2 text-sm font-bold text-accent-sky hover:bg-accent-sky hover:text-white transition-all" data-i18n="btn_chg_pwd">Change Password</button>
+                    <button onclick="dummyAlert('Change Password')" class="w-full sm:w-auto rounded-lg border border-accent-sky/20 bg-[#e0f2fe] px-4 py-2 text-xs md:text-sm font-bold text-accent-sky hover:bg-accent-sky hover:text-white transition-all" data-i18n="btn_chg_pwd">Change Password</button>
                   </div>
                   <div class="h-px bg-slate-100"></div>
                   <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div class="flex gap-4">
-                      <div class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                        <span class="material-symbols-outlined">security</span>
+                    <div class="flex gap-3 md:gap-4">
+                      <div class="mt-1 flex h-8 w-8 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                        <span class="material-symbols-outlined text-[20px] md:text-[24px]">security</span>
                       </div>
                       <div>
-                        <h4 class="font-bold text-slate-900 flex items-center gap-2">
+                        <h4 class="font-bold text-sm md:text-base text-slate-900 flex items-center gap-2">
                           <span data-i18n="two_fac">Two-Factor Authentication (2FA)</span>
-                          <span id="badge-2fa" class="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase" data-i18n="stat_active">Active</span>
+                          <span id="badge-2fa" class="rounded bg-emerald-100 px-2 py-0.5 text-[9px] md:text-[10px] font-bold text-emerald-700 uppercase" data-i18n="stat_active">Active</span>
                         </h4>
-                        <p class="text-sm text-slate-500 max-w-md mt-1" data-i18n="two_fac_desc">2FA adds an extra layer of security to your account by requiring more than just a password to log in.</p>
+                        <p class="text-xs md:text-sm text-slate-500 max-w-md mt-1" data-i18n="two_fac_desc">2FA adds an extra layer of security to your account by requiring more than just a password to log in.</p>
                       </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                      <span id="status-2fa-text" class="text-sm font-medium text-slate-400" data-i18n="stat_enabled">Enabled</span>
-                      <button id="btn-2fa" onclick="toggle2FA()" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out">
-                        <span id="knob-2fa" class="translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                    <div class="flex items-center gap-3 mt-2 md:mt-0 ml-11 md:ml-0">
+                      <span id="status-2fa-text" class="text-xs md:text-sm font-medium text-slate-400" data-i18n="stat_enabled">Enabled</span>
+                      <button id="btn-2fa" onclick="toggle2FA()" class="relative inline-flex h-5 w-9 md:h-6 md:w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-emerald-500 transition-colors duration-200 ease-in-out">
+                        <span id="knob-2fa" class="translate-x-4 md:translate-x-5 pointer-events-none inline-block h-4 w-4 md:h-5 md:w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
                       </button>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <div class="flex items-center justify-between rounded-xl bg-slate-100 px-6 py-4">
-                <div class="flex items-center gap-3 text-slate-500">
-                  <span class="material-symbols-outlined text-lg">info</span>
-                  <span class="text-xs uppercase tracking-wider font-semibold" data-i18n="active_sess">Active Sessions: 2 (This browser + Mobile App)</span>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl bg-slate-100 px-5 md:px-6 py-4 gap-3">
+                <div class="flex items-center gap-2 md:gap-3 text-slate-500">
+                  <span class="material-symbols-outlined text-base md:text-lg">info</span>
+                  <span class="text-[10px] md:text-xs uppercase tracking-wider font-semibold" data-i18n="active_sess">Active Sessions: 2 (This browser + Mobile App)</span>
                 </div>
-                <button onclick="dummyAlert('Revoke Sessions')" class="text-xs font-bold text-red-500 hover:underline" data-i18n="btn_revoke">Revoke All Sessions</button>
+                <button onclick="dummyAlert('Revoke Sessions')" class="text-xs font-bold text-red-500 hover:underline sm:text-right" data-i18n="btn_revoke">Revoke All Sessions</button>
               </div>
 
             </div>
@@ -791,6 +807,21 @@
       }
     };
 
+    // --- Mobile Sidebar Logic ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('-translate-x-full');
+      sidebarOverlay.classList.toggle('hidden');
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+
     // --- Badge & Role Rendering Utilities ---
     function getPriorityBadgeHtml(val) {
       const keys = { 'NORMAL': 'pri_normal', 'URGENT': 'pri_urgent', 'CRITICAL': 'pri_critical' };
@@ -801,7 +832,6 @@
       return `<span class="px-2 py-1 ${color} rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="${key}">${text}</span>`;
     }
 
-    // Dynamic Machine Owners Logic (Role-Based Data Binding)
     function renderMachineOwners(role, initials) {
       const machines = {
         'sem-01': [{ init: 'MW', color: 'bg-slate-600' }],
@@ -812,7 +842,6 @@
         'xrd-01': [{ init: 'MW', color: 'bg-amber-500' }]
       };
 
-      // 根據角色動態分派負責人 (如果是這些角色，就會在特定機台加上當前使用者的名字)
       if (['ROLE_SYSADMIN', 'ROLE_MACHINE_OWNER', 'ROLE_MACHINE_SUPERVISOR'].includes(role)) {
         machines['sem-01'].unshift({ init: initials, color: 'bg-corporate-blue' });
         machines['etest-02'].unshift({ init: initials, color: 'bg-corporate-blue' });
@@ -822,7 +851,6 @@
         machines['xrd-01'].unshift({ init: initials, color: 'bg-corporate-blue' });
       }
 
-      // 將資料渲染進對應的 HTML 容器
       for (const [machId, owners] of Object.entries(machines)) {
         const container = document.getElementById(`owners-${machId}`);
         if (container) {
@@ -836,9 +864,9 @@
     // 1. Language Toggle Logic
     function setLanguage(lang) {
       currentAppLang = lang; 
-      document.querySelectorAll('.lang-btn').forEach(btn => btn.className = 'px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all');
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.className = 'px-2 md:px-3 py-1 text-slate-500 hover:text-slate-700 lang-btn transition-all');
       const activeBtn = document.getElementById(`btn-lang-${lang}`);
-      if (activeBtn) activeBtn.className = 'px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all';
+      if (activeBtn) activeBtn.className = 'px-2 md:px-3 py-1 bg-white rounded shadow-sm text-corporate-blue lang-btn transition-all';
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) el.innerText = translations[lang][key];
@@ -849,6 +877,12 @@
     // 2. Tab Switching Logic
     document.querySelectorAll('.nav-link').forEach(button => {
       button.addEventListener('click', () => {
+        // Auto-close sidebar on mobile after clicking a link
+        if (window.innerWidth < 768) {
+          sidebar.classList.add('-translate-x-full');
+          sidebarOverlay.classList.add('hidden');
+        }
+
         document.querySelectorAll('.nav-link').forEach(btn => {
           btn.classList.remove('active', 'bg-corporate-blue', 'text-white');
           btn.classList.add('text-slate-600', 'hover:bg-slate-50');
@@ -906,7 +940,7 @@
             <p class="text-[10px] text-slate-500 font-mono">${desc}</p>
           </div>
         </div>
-        <button onclick="removeNotification(this)" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity">
+        <button onclick="removeNotification(this)" class="opacity-0 md:group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-opacity">
           <span class="material-symbols-outlined text-[16px]">close</span>
         </button>
       `;
@@ -1050,10 +1084,10 @@
         const myReqRow = document.createElement('tr');
         myReqRow.className = "hover:bg-slate-50";
         myReqRow.innerHTML = `
-          <td class="px-6 py-4 font-mono font-bold">${reqId}</td>
-          <td class="px-6 py-4 text-xs text-slate-600">${expHtmlForMyReq}</td>
-          <td class="px-6 py-4">${wafersCount}</td>
-          <td class="px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
+          <td class="px-4 md:px-6 py-4 font-mono font-bold">${reqId}</td>
+          <td class="px-4 md:px-6 py-4 text-xs text-slate-600">${expHtmlForMyReq}</td>
+          <td class="px-4 md:px-6 py-4">${wafersCount}</td>
+          <td class="px-4 md:px-6 py-4 text-right"><span class="px-2 py-1 bg-amber-50 text-amber-600 rounded text-[10px] font-bold tracking-wider" data-i18n="status_pending">PENDING</span></td>
         `;
         myReqBody.insertBefore(myReqRow, myReqBody.firstChild);
       }
@@ -1066,7 +1100,7 @@
         mgrRow.setAttribute('data-priority', priorityVal);
 
         mgrRow.innerHTML = `
-          <td class="px-6 py-4">
+          <td class="px-4 md:px-6 py-4">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 shrink-0 rounded-full bg-corporate-blue text-white text-xs font-bold flex items-center justify-center shadow-sm">${userInitials}</div>
               <div class="whitespace-nowrap">
@@ -1078,18 +1112,18 @@
               </div>
             </div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-4 md:px-6 py-4">
             <div class="flex flex-wrap gap-1.5 max-w-full">${waferHtmlForManager}</div>
           </td>
-          <td class="px-6 py-4">
+          <td class="px-4 md:px-6 py-4">
             <div class="flex flex-wrap gap-1.5 max-w-full">${expHtmlForManager}</div>
           </td>
-          <td class="px-6 py-4 text-center align-middle">
+          <td class="px-4 md:px-6 py-4 text-center align-middle">
             ${messageCellHtml}
           </td>
-          <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
-            <button onclick="approveRequest(this)" class="px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
-            <button onclick="rejectRequest(this)" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
+          <td class="px-4 md:px-6 py-4 text-right space-x-2 whitespace-nowrap align-middle">
+            <button onclick="approveRequest(this)" class="px-3 md:px-4 py-2 bg-emerald-500 text-white text-xs font-bold rounded-lg hover:bg-emerald-600 shadow-sm transition-all" data-i18n="btn_approve">Approve</button>
+            <button onclick="rejectRequest(this)" class="px-3 md:px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 shadow-sm transition-all" data-i18n="btn_reject">Reject</button>
           </td>
         `;
         approvalBody.insertBefore(mgrRow, approvalBody.firstChild);
@@ -1144,7 +1178,7 @@
       document.getElementById('card-user-initials').innerText = initials;
       
       applyPermissions(selectedRoleEnum);
-      renderMachineOwners(selectedRoleEnum, initials); // Trigger Role-Based Data Binding
+      renderMachineOwners(selectedRoleEnum, initials); 
       
       alert(currentAppLang === 'en' ? "✅ Profile Updated Successfully!\n\nHeader and Profile card have been synced." : "✅ 檔案更新成功！\n\n頂部選單與個人卡片資料已同步。");
     }
@@ -1158,12 +1192,12 @@
       is2FAEnabled = !is2FAEnabled;
       const btn = document.getElementById('btn-2fa'), knob = document.getElementById('knob-2fa'), statusText = document.getElementById('status-2fa-text'), badge = document.getElementById('badge-2fa');
       if (is2FAEnabled) {
-        btn.classList.replace('bg-slate-300', 'bg-emerald-500'); knob.classList.replace('translate-x-0', 'translate-x-5');
+        btn.classList.replace('bg-slate-300', 'bg-emerald-500'); knob.classList.replace('translate-x-0', 'translate-x-4 md:translate-x-5');
         statusText.innerText = currentAppLang === 'en' ? 'Enabled' : '已啟用'; statusText.setAttribute('data-i18n', 'stat_enabled');
         badge.innerText = currentAppLang === 'en' ? 'Active' : '使用中'; badge.setAttribute('data-i18n', 'stat_active');
         badge.classList.replace('bg-slate-100', 'bg-emerald-100'); badge.classList.replace('text-slate-600', 'text-emerald-700');
       } else {
-        btn.classList.replace('bg-emerald-500', 'bg-slate-300'); knob.classList.replace('translate-x-5', 'translate-x-0');
+        btn.classList.replace('bg-emerald-500', 'bg-slate-300'); knob.classList.replace('translate-x-4 md:translate-x-5', 'translate-x-0');
         statusText.innerText = currentAppLang === 'en' ? 'Disabled' : '已停用'; statusText.removeAttribute('data-i18n'); 
         badge.innerText = currentAppLang === 'en' ? 'Inactive' : '已停用'; badge.removeAttribute('data-i18n');
         badge.classList.replace('bg-emerald-100', 'bg-slate-100'); badge.classList.replace('text-emerald-700', 'text-slate-600');
@@ -1212,10 +1246,10 @@
           const expHtml = exps.map(e => `<span data-i18n="${e.key}">${e.text}</span>`).join(', ');
 
           wipRow.innerHTML = `
-            <td class="px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
-            <td class="px-6 py-4 font-mono font-bold">${waferId}</td>
-            <td class="px-6 py-4 text-xs text-slate-500">${expHtml}</td>
-            <td class="px-6 py-4">${priorityBadgeHtml}</td>
+            <td class="px-4 md:px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
+            <td class="px-4 md:px-6 py-4 font-mono font-bold">${waferId}</td>
+            <td class="px-4 md:px-6 py-4 text-xs text-slate-500">${expHtml}</td>
+            <td class="px-4 md:px-6 py-4">${priorityBadgeHtml}</td>
           `;
           wipBody.insertBefore(wipRow, wipBody.firstChild);
         });
@@ -1253,7 +1287,7 @@
     function checkEmptyQueue() {
       const tbody = document.getElementById('approval-queue-body');
       if (tbody.children.length === 0) {
-        tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-6 py-12 text-center text-slate-400\"><span class=\"material-symbols-outlined text-4xl mb-2 opacity-50\">task_alt</span><p class=\"font-bold text-sm\" data-i18n=\"queue_empty\">Queue is empty. All caught up!</p></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-4 md:px-6 py-12 text-center text-slate-400\"><span class=\"material-symbols-outlined text-4xl mb-2 opacity-50\">task_alt</span><p class=\"font-bold text-sm\" data-i18n=\"queue_empty\">Queue is empty. All caught up!</p></td></tr>`;
         setLanguage(currentAppLang); 
       }
     }
