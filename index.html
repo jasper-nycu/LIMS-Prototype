@@ -278,112 +278,138 @@
         </div>
 
         <div>
-          <h2 class="font-bold text-lg mb-4" data-i18n="fsm_title">Machine Management (FSM)</h2>
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4 mt-8">
+            <h2 class="font-bold text-lg" data-i18n="fsm_title">Machine Management (FSM)</h2>
+            <div class="flex gap-2">
+              <button onclick="dummyAlert('Manage Machines')" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">settings</span>
+                <span data-i18n="btn_manage_mach">Manage Machines</span>
+              </button>
+              <button onclick="dummyAlert('Manage Recipes')" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">list_alt</span>
+                <span data-i18n="btn_manage_recipe">Manage Recipes</span>
+              </button>
+            </div>
+          </div>
+          
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] opacity-80 pointer-events-none relative overflow-hidden">
+            <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] relative overflow-hidden flex flex-col">
               <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse"></div>
-              <div class="flex justify-between items-start mb-4">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg">SEM-01</h3>
                   <p class="text-xs text-slate-400">Cap: 25 Wafers</p>
                 </div>
                 <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded" data-i18n="fsm_proc">PROCESSING</span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_sem">Surface Scan (SEM)</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-corporate-blue text-white flex items-center justify-center text-[10px] font-bold border border-white">JL</div>
-                  <div class="w-6 h-6 rounded-full bg-slate-600 text-white flex items-center justify-center text-[10px] font-bold border border-white">MW</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_sem">Surface Scan (SEM)</span></div>
+              <div class="bg-emerald-50 rounded p-2 mb-3 border border-emerald-100/50">
+                 <p class="text-[10px] font-bold text-emerald-700 uppercase" data-i18n="lbl_loaded">Loaded:</p>
+                 <p class="text-xs font-mono text-emerald-600 mt-0.5">W-8821, W-9005</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-sem-01" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="unloadMachine('SEM-01')" class="w-full mt-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded border border-emerald-200 hover:bg-emerald-100 transition-colors" data-i18n="btn_unload">Unload Wafers</button>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue">
-              <div class="flex justify-between items-start mb-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue flex flex-col">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg">BAKE-OVEN-01</h3>
                   <p class="text-xs text-slate-400">Cap: 50 Wafers</p>
                 </div>
                 <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded" data-i18n="fsm_idle">IDLE</span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_bake">High-Temp Bake</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-accent-sky text-white flex items-center justify-center text-[10px] font-bold border border-white">SC</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_bake">High-Temp Bake</span></div>
+              <div class="bg-slate-50 rounded p-2 mb-3 border border-slate-100 border-dashed">
+                 <p class="text-xs font-mono text-slate-400 text-center" data-i18n="lbl_ready">Ready for dispatch</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-bake-01" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="dummyAlert('View Logs')" class="w-full mt-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded border border-slate-200 hover:bg-slate-100 transition-colors" data-i18n="btn_view_logs">View Logs</button>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-red-300 bg-red-50/30 shadow-sm">
-              <div class="flex justify-between items-start mb-4">
+            <div class="bg-white p-5 rounded-2xl border border-red-300 bg-red-50/30 shadow-sm flex flex-col">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg text-red-900">TEM-01</h3>
                   <p class="text-xs text-red-400">Cap: 10 Wafers</p>
                 </div>
                 <span class="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-bold rounded flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">warning</span> <span data-i18n="fsm_alarm">ALARM</span></span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_deep">Deep Layer Analysis</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-red-100">
-                <span class="text-[10px] font-bold text-red-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-bold border border-white">RK</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_deep">Deep Layer Analysis</span></div>
+              <div class="bg-red-100/50 rounded p-2 mb-3 border border-red-200">
+                 <p class="text-[10px] font-bold text-red-700 uppercase" data-i18n="lbl_error">Error:</p>
+                 <p class="text-xs font-mono text-red-600 mt-0.5">ERR_VACUUM_LOSS</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-red-100 mt-auto">
+                <span class="text-[10px] font-bold text-red-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-tem-01" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="resolveAlarm('TEM-01')" class="w-full mt-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded shadow-sm hover:bg-red-600 transition-colors" data-i18n="btn_clear_alarm">Resolve Alarm</button>
             </div>
             
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue">
-              <div class="flex justify-between items-start mb-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue flex flex-col">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg">FIB-01</h3>
                   <p class="text-xs text-slate-400">Cap: 1 Wafer</p>
                 </div>
                 <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded" data-i18n="fsm_idle">IDLE</span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_fib">Focused Ion Beam (FIB)</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-bold border border-white">CH</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_fib">Focused Ion Beam (FIB)</span></div>
+              <div class="bg-slate-50 rounded p-2 mb-3 border border-slate-100 border-dashed">
+                 <p class="text-xs font-mono text-slate-400 text-center" data-i18n="lbl_ready">Ready for dispatch</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-fib-01" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="dummyAlert('View Logs')" class="w-full mt-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded border border-slate-200 hover:bg-slate-100 transition-colors" data-i18n="btn_view_logs">View Logs</button>
             </div>
             
-            <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] opacity-80 pointer-events-none relative overflow-hidden">
+            <div class="bg-white p-5 rounded-2xl border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)] relative overflow-hidden flex flex-col">
               <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse"></div>
-              <div class="flex justify-between items-start mb-4">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg">E-TEST-02</h3>
                   <p class="text-xs text-slate-400">Cap: 50 Wafers</p>
                 </div>
                 <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded" data-i18n="fsm_proc">PROCESSING</span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_etest">Electrical Test</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold border border-white">AS</div>
-                  <div class="w-6 h-6 rounded-full bg-corporate-blue text-white flex items-center justify-center text-[10px] font-bold border border-white">JL</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_etest">Electrical Test</span></div>
+              <div class="bg-emerald-50 rounded p-2 mb-3 border border-emerald-100/50">
+                 <p class="text-[10px] font-bold text-emerald-700 uppercase" data-i18n="lbl_loaded">Loaded:</p>
+                 <p class="text-xs font-mono text-emerald-600 mt-0.5">W-0120</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-etest-02" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="unloadMachine('E-TEST-02')" class="w-full mt-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded border border-emerald-200 hover:bg-emerald-100 transition-colors" data-i18n="btn_unload">Unload Wafers</button>
             </div>
             
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue">
-              <div class="flex justify-between items-start mb-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-corporate-blue flex flex-col">
+              <div class="flex justify-between items-start mb-2">
                 <div>
                   <h3 class="font-bold text-lg">XRD-01</h3>
                   <p class="text-xs text-slate-400">Cap: 25 Wafers</p>
                 </div>
                 <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded" data-i18n="fsm_idle">IDLE</span>
               </div>
-              <div class="text-xs text-slate-500 mb-4"><span data-i18n="exp_xrd">X-Ray Diffraction</span></div>
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div class="flex -space-x-2">
-                  <div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold border border-white">MW</div>
-                </div>
+              <div class="text-xs text-slate-500 mb-3"><span data-i18n="exp_xrd">X-Ray Diffraction</span></div>
+              <div class="bg-slate-50 rounded p-2 mb-3 border border-slate-100 border-dashed">
+                 <p class="text-xs font-mono text-slate-400 text-center" data-i18n="lbl_ready">Ready for dispatch</p>
               </div>
+              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                <div id="owners-xrd-01" class="flex -space-x-2"></div>
+              </div>
+              <button onclick="dummyAlert('View Logs')" class="w-full mt-3 py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded border border-slate-200 hover:bg-slate-100 transition-colors" data-i18n="btn_view_logs">View Logs</button>
             </div>
 
           </div>
@@ -464,11 +490,7 @@
             
             <div class="relative pt-2 pb-8 flex-1 flex flex-col justify-around border-b border-slate-100">
               <div class="absolute inset-0 flex justify-between pl-28 pr-14 pb-8 pointer-events-none">
-                <div class="w-px h-full bg-slate-200"></div>
-                <div class="w-px h-full bg-slate-200"></div>
-                <div class="w-px h-full bg-slate-200"></div>
-                <div class="w-px h-full bg-slate-200"></div>
-                <div class="w-px h-full bg-slate-200"></div>
+                <div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div><div class="w-px h-full bg-slate-200"></div>
               </div>
               <style>
                 @keyframes expandBar { from { width: 0; } }
@@ -531,11 +553,7 @@
               </div>
 
               <div class="absolute bottom-0 left-0 w-full flex justify-between pl-28 pr-14 text-[10px] font-bold text-slate-400 uppercase transform translate-y-3">
-                <span data-i18n="day_mon">Mon</span>
-                <span data-i18n="day_tue">Tue</span>
-                <span data-i18n="day_wed">Wed</span>
-                <span data-i18n="day_thu">Thu</span>
-                <span data-i18n="day_fri">Fri</span>
+                <span data-i18n="day_mon">Mon</span><span data-i18n="day_tue">Tue</span><span data-i18n="day_wed">Wed</span><span data-i18n="day_thu">Thu</span><span data-i18n="day_fri">Fri</span>
               </div>
             </div>
             
@@ -729,7 +747,9 @@
         'day_mon': 'Mon', 'day_tue': 'Tue', 'day_wed': 'Wed', 'day_thu': 'Thu', 'day_fri': 'Fri',
         'wafer_format_err': 'Invalid format. Must be W-XXXX (e.g., W-1049).', 'queue_empty': 'Queue is empty. All caught up!', 
         'tbl_msg': 'Message', 'lbl_pending': 'PENDING', 'notif_new_req': 'New Request', 'notif_req_appr': 'Request Approved',
-        'no_notif': 'No new notifications'
+        'no_notif': 'No new notifications', 'btn_manage_mach': 'Manage Machines', 'btn_manage_recipe': 'Manage Recipes',
+        'btn_view_logs': 'View Logs', 'btn_clear_alarm': 'Resolve Alarm', 'btn_unload': 'Unload Wafers',
+        'lbl_loaded': 'Loaded:', 'lbl_error': 'Error:', 'lbl_ready': 'Ready for dispatch'
       },
       'tw': {
         'lab_ra': '可靠度實驗室 (RA)', 'lab_ma': '材料分析實驗室 (MA)', 'lab_fa': '故障分析實驗室 (FA)',
@@ -765,22 +785,52 @@
         'day_mon': '一', 'day_tue': '二', 'day_wed': '三', 'day_thu': '四', 'day_fri': '五',
         'wafer_format_err': '格式錯誤，請輸入 W-XXXX (例如: W-1049)。', 'queue_empty': '目前無待簽核項目！',
         'tbl_msg': '備註', 'lbl_pending': '待簽核', 'notif_new_req': '新委託單成立', 'notif_req_appr': '委託單已核准',
-        'no_notif': '目前無新通知'
+        'no_notif': '目前無新通知', 'btn_manage_mach': '機台管理', 'btn_manage_recipe': 'Recipe 管理',
+        'btn_view_logs': '歷史紀錄', 'btn_clear_alarm': '介入解除警報', 'btn_unload': '執行下貨',
+        'lbl_loaded': '當前載入:', 'lbl_error': '錯誤碼:', 'lbl_ready': '狀態: 待機中'
       }
     };
 
-    // --- Badge Generator Utility ---
+    // --- Badge & Role Rendering Utilities ---
     function getPriorityBadgeHtml(val) {
       const keys = { 'NORMAL': 'pri_normal', 'URGENT': 'pri_urgent', 'CRITICAL': 'pri_critical' };
-      const colors = { 
-        'NORMAL': 'bg-slate-100 text-slate-600', 
-        'URGENT': 'bg-amber-50 text-amber-600', 
-        'CRITICAL': 'bg-red-50 text-red-600' 
-      };
+      const colors = { 'NORMAL': 'bg-slate-100 text-slate-600', 'URGENT': 'bg-amber-50 text-amber-600', 'CRITICAL': 'bg-red-50 text-red-600' };
       const key = keys[val] || 'pri_normal';
       const color = colors[val] || colors['NORMAL'];
       const text = translations[currentAppLang][key] || val;
       return `<span class="px-2 py-1 ${color} rounded text-[10px] font-bold uppercase tracking-wider" data-i18n="${key}">${text}</span>`;
+    }
+
+    // Dynamic Machine Owners Logic (Role-Based Data Binding)
+    function renderMachineOwners(role, initials) {
+      const machines = {
+        'sem-01': [{ init: 'MW', color: 'bg-slate-600' }],
+        'bake-01': [{ init: 'SC', color: 'bg-accent-sky' }],
+        'tem-01': [{ init: 'RK', color: 'bg-red-500' }],
+        'fib-01': [{ init: 'CH', color: 'bg-indigo-500' }],
+        'etest-02': [{ init: 'AS', color: 'bg-emerald-600' }],
+        'xrd-01': [{ init: 'MW', color: 'bg-amber-500' }]
+      };
+
+      // 根據角色動態分派負責人 (如果是這些角色，就會在特定機台加上當前使用者的名字)
+      if (['ROLE_SYSADMIN', 'ROLE_MACHINE_OWNER', 'ROLE_MACHINE_SUPERVISOR'].includes(role)) {
+        machines['sem-01'].unshift({ init: initials, color: 'bg-corporate-blue' });
+        machines['etest-02'].unshift({ init: initials, color: 'bg-corporate-blue' });
+      }
+      if (['ROLE_SYSADMIN', 'ROLE_LAB_MANAGER', 'ROLE_LAB_OPERATOR'].includes(role)) {
+        machines['bake-01'].unshift({ init: initials, color: 'bg-corporate-blue' });
+        machines['xrd-01'].unshift({ init: initials, color: 'bg-corporate-blue' });
+      }
+
+      // 將資料渲染進對應的 HTML 容器
+      for (const [machId, owners] of Object.entries(machines)) {
+        const container = document.getElementById(`owners-${machId}`);
+        if (container) {
+          container.innerHTML = owners.map(o => 
+            `<div class="w-6 h-6 rounded-full ${o.color} text-white flex items-center justify-center text-[10px] font-bold border border-white shadow-sm transition-all">${o.init}</div>`
+          ).join('');
+        }
+      }
     }
 
     // 1. Language Toggle Logic
@@ -1094,6 +1144,8 @@
       document.getElementById('card-user-initials').innerText = initials;
       
       applyPermissions(selectedRoleEnum);
+      renderMachineOwners(selectedRoleEnum, initials); // Trigger Role-Based Data Binding
+      
       alert(currentAppLang === 'en' ? "✅ Profile Updated Successfully!\n\nHeader and Profile card have been synced." : "✅ 檔案更新成功！\n\n頂部選單與個人卡片資料已同步。");
     }
 
@@ -1120,9 +1172,9 @@
 
     const rolePermissions = {
       'ROLE_SYSADMIN': ['view-factory-request', 'view-lab-operations', 'view-manager-dashboard', 'view-my-profile'],
-      'ROLE_LAB_MANAGER': ['view-manager-dashboard', 'view-my-profile'],
+      'ROLE_LAB_MANAGER': ['view-lab-operations', 'view-manager-dashboard', 'view-my-profile'],
       'ROLE_LAB_OPERATOR': ['view-lab-operations', 'view-my-profile'],
-      'ROLE_MACHINE_SUPERVISOR': ['view-manager-dashboard', 'view-my-profile'],
+      'ROLE_MACHINE_SUPERVISOR': ['view-lab-operations', 'view-manager-dashboard', 'view-my-profile'],
       'ROLE_MACHINE_OWNER': ['view-lab-operations', 'view-my-profile'],
       'ROLE_FAB_USER': ['view-factory-request', 'view-my-profile'],
       'ROLE_PUBLIC': ['view-my-profile']
@@ -1139,7 +1191,6 @@
       });
       if (!currentActiveViewStillAllowed) goToProfile();
     }
-    applyPermissions('ROLE_SYSADMIN');
 
     // 13. Approval Workflow Logic
     function approveRequest(btn) {
@@ -1272,7 +1323,18 @@
       setTimeout(updateWipCount, 450);
     }
 
-    // Initialize counters on load
+    // 17. Machine Management Actions
+    function unloadMachine(machId) {
+      alert(currentAppLang === 'en' ? `✅ Wafers unloaded from ${machId}. History log recorded.` : `✅ 已從 ${machId} 完成下貨，並寫入歷史紀錄。`);
+    }
+
+    function resolveAlarm(machId) {
+      alert(currentAppLang === 'en' ? `✅ Maintenance requested for ${machId}. Alarm cleared and relevant personnel notified.` : `✅ 已通知相關人員處理 ${machId}，警報暫時解除。`);
+    }
+
+    // Initialize Application State on Load
+    applyPermissions('ROLE_SYSADMIN');
+    renderMachineOwners('ROLE_SYSADMIN', 'JL');
     updatePendingCounter();
     updateWipCount();
   </script>
