@@ -490,11 +490,11 @@
     let capChartInstance2 = null; 
 
     let machineStates = {
-        'SEM-01': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 25, expKey: 'exp_sem', name: 'Surface Scan (SEM)' },
+        'SEM-01': { state: 'PROCESSING', currentUtil: 72, loaded: ['W-1001', 'W-1002', 'W-1003', 'W-1004', 'W-1005', 'W-1006', 'W-1007', 'W-1008', 'W-1009', 'W-1010', 'W-1011', 'W-1012', 'W-1013', 'W-1014', 'W-1015', 'W-1016', 'W-1017', 'W-1018'], error: null, cap: 25, expKey: 'exp_sem', name: 'Surface Scan (SEM)' },
         'BAKE-OVEN-01': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 50, expKey: 'exp_bake', name: 'High-Temp Bake' },
         'TEM-01': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 10, expKey: 'exp_deep', name: 'Deep Layer Analysis' },
         'FIB-01': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 1, expKey: 'exp_fib', name: 'Focused Ion Beam (FIB)' },
-        'E-TEST-02': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 50, expKey: 'exp_etest', name: 'Electrical Test' },
+        'E-TEST-02': { state: 'PROCESSING', currentUtil: 84, loaded: ['W-2001', 'W-2002', 'W-2003', 'W-2004', 'W-2005', 'W-2006', 'W-2007', 'W-2008', 'W-2009', 'W-2010', 'W-2011', 'W-2012', 'W-2013', 'W-2014', 'W-2015', 'W-2016', 'W-2017', 'W-2018', 'W-2019', 'W-2020', 'W-2021', 'W-2022', 'W-2023', 'W-2024', 'W-2025', 'W-2026', 'W-2027', 'W-2028', 'W-2029', 'W-2030', 'W-2031', 'W-2032', 'W-2033', 'W-2034', 'W-2035', 'W-2036', 'W-2037', 'W-2038', 'W-2039', 'W-2040', 'W-2041', 'W-2042'], error: null, cap: 50, expKey: 'exp_etest', name: 'Electrical Test' },
         'XRD-01': { state: 'IDLE', currentUtil: 0, loaded: [], error: null, cap: 25, expKey: 'exp_xrd', name: 'X-Ray Diffraction' }
     };
 
@@ -712,41 +712,68 @@
         openModal('message-modal');
     }
 
-    function openManageMachines() {
+    function refreshManageMachinesList() {
         const list = document.getElementById('manage-machines-list');
+        if (!list) return;
         list.innerHTML = '';
         for (const [id, m] of Object.entries(machineStates)) {
             const isMaint = m.state === 'MAINTENANCE';
-            const statusColor = isMaint ? 'bg-slate-200 text-slate-600' : 'bg-emerald-100 text-emerald-600';
-            const statusText = isMaint ? (translations[currentAppLang]['stat_maint'] || 'Maintenance') : (translations[currentAppLang]['stat_online'] || 'Online');
-            const icon = isMaint ? 'play_arrow' : 'build';
-            const iconColor = isMaint ? 'text-emerald-500 hover:bg-emerald-50' : 'text-slate-500 hover:bg-slate-100';
+            const isAlarm = m.state === 'ALARM';
+            
+            let statusColor = 'bg-emerald-100 text-emerald-700';
+            let statusText = translations[currentAppLang]['stat_online'] || 'Online';
+            let icon = 'build';
+            let iconColor = 'text-slate-500 hover:bg-slate-100';
+
+            if (isMaint) {
+                statusColor = 'bg-slate-200 text-slate-600';
+                statusText = translations[currentAppLang]['stat_maint'] || 'Maintenance';
+                icon = 'play_arrow';
+                iconColor = 'text-emerald-500 hover:bg-emerald-50';
+            } else if (isAlarm) {
+                statusColor = 'bg-red-100 text-red-700';
+                statusText = translations[currentAppLang]['fsm_alarm'] || 'ALARM';
+            }
             
             list.innerHTML += `
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
                 <div><h4 class="font-bold text-sm text-slate-800">${id}</h4><p class="text-xs text-slate-500">Cap: ${m.cap}</p></div>
                 <div class="flex items-center gap-3">
                     <span class="px-2 py-1 ${statusColor} text-[10px] font-bold rounded">${statusText}</span>
-                    <button onclick="toggleMaintenance('${id}')" class="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm transition-colors ${iconColor}" title="Toggle Maintenance">
+                    <button onclick="toggleMaintenance('${id}')" class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm transition-all ${iconColor}" title="Toggle Maintenance">
                         <span class="material-symbols-outlined text-[16px]">${icon}</span>
                     </button>
                 </div>
             </div>`;
         }
+    }
+
+    function openManageMachines() {
+        refreshManageMachinesList();
         openModal('manage-machines-modal');
     }
 
     function toggleMaintenance(id) {
-        if (machineStates[id].state === 'PROCESSING') return alert(translations[currentAppLang]['err_maint'] || "Cannot maintain while processing.");
-        if (machineStates[id].state === 'MAINTENANCE') {
-            machineStates[id].state = 'IDLE';
-        } else {
-            machineStates[id].state = 'MAINTENANCE';
-            machineStates[id].error = null;
+        const m = machineStates[id];
+        if (m.state === 'PROCESSING' && m.error === null) {
+            return alert(translations[currentAppLang]['err_maint'] || "Cannot maintain while processing.");
         }
-        openManageMachines();
+        
+        if (m.state === 'MAINTENANCE') {
+            m.state = (m.loaded && m.loaded.length > 0) ? 'PROCESSING' : 'IDLE';
+            m.currentUtil = (m.state === 'PROCESSING') ? Math.round((m.loaded.length / m.cap) * 100) : 0;
+            addNotification(null, `System: ${id} Online`, `Machine is back to ${m.state}. Supervisor notified.`, 'success');
+        } else {
+            m.state = 'MAINTENANCE';
+            m.error = null;
+            m.currentUtil = 0;
+            addNotification(null, `System: ${id} Offline`, `Preventive Maintenance started for ${id}.`, 'info');
+        }
+        
+        if (!document.getElementById('manage-machines-modal').classList.contains('hidden')) refreshManageMachinesList();
         renderMachineCards();
         updateMachineDropdowns();
+        if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
     }
 
     function openManageRecipes() {
@@ -857,7 +884,7 @@
               ${stateInfoHtml}
               <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
                 <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div id="owners-${id}" class="flex -space-x-2"></div>
+                <div id="owners-${id.replace(/\s+/g, '-')}" class="flex -space-x-2 machine-owner-list" data-machine="${id}"></div>
               </div>
               ${actionButtonsHtml}
             </div>`;
@@ -907,6 +934,7 @@
         machineStates[machId].error = 'ERR_SIMULATED_FAULT';
         machineStates[machId].currentUtil = 0;
         renderMachineCards(); updateMachineDropdowns();
+        if (!document.getElementById('manage-machines-modal').classList.contains('hidden')) refreshManageMachinesList();
         if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
         const title = currentAppLang === 'en' ? `Alert: ${machId} Fault` : `🚨 警報：${machId} 發生異常`;
         const desc = currentAppLang === 'en' ? `Simulated error on ${machId}. Owner notified.` : `已發送異常通知給機台負責人。`;
@@ -923,6 +951,7 @@
         }
         machineStates[machId].error = null;
         renderMachineCards(); updateMachineDropdowns();
+        if (!document.getElementById('manage-machines-modal').classList.contains('hidden')) refreshManageMachinesList();
         if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
         const title = currentAppLang === 'en' ? `Resolved: ${machId}` : `✅ 解除警報：${machId}`;
         const desc = currentAppLang === 'en' ? `Machine is back online.` : `機台已恢復運作狀態。`;
@@ -1008,7 +1037,13 @@
         else labels.push(i === 0 ? (currentAppLang === 'en' ? 'Now' : '現在') : formatTime(t));
 
         const getVal = (machId) => {
-            if (i === 0) return machineStates[machId].currentUtil;
+            const m = machineStates[machId];
+            if (i === 0) {
+                // Return 0 if machine is in ALARM or MAINTENANCE, otherwise calc based on load
+                if (m.state === 'ALARM' || m.state === 'MAINTENANCE') return 0;
+                return m.loaded.length > 0 ? Math.round((m.loaded.length / m.cap) * 100) : 0;
+            }
+            // For historical points, simulate that the machine was running between 60%-95%
             return Math.floor(Math.random() * 35) + 60; 
         };
         
@@ -1094,28 +1129,37 @@
 
     function renderMachineOwners(role, name) {
       const initials = generateInitials(name);
-      const userContent = globalAvatarDataUrl ? `<img src="${globalAvatarDataUrl}" class="w-full h-full object-cover">` : initials;
-      const machines = {
-        'SEM-01': [{ content: 'MW', color: 'bg-slate-600' }], 'BAKE-OVEN-01': [{ content: 'SC', color: 'bg-accent-sky' }],
-        'TEM-01': [{ content: 'RK', color: 'bg-red-500' }], 'FIB-01': [{ content: 'CH', color: 'bg-indigo-500' }],
-        'E-TEST-02': [{ content: 'AS', color: 'bg-emerald-600' }], 'XRD-01': [{ content: 'MW', color: 'bg-amber-500' }]
+      const userAvatar = globalAvatarDataUrl ? `<img src="${globalAvatarDataUrl}" class="w-full h-full object-cover">` : initials;
+      
+      const ownerMap = {
+        'SEM-01':       [{ initials: 'MW', color: 'bg-slate-600' }, { initials: 'JS', color: 'bg-blue-400' }],
+        'BAKE-OVEN-01': [{ initials: 'SC', color: 'bg-accent-sky' }],
+        'TEM-01':       [{ initials: 'RK', color: 'bg-red-500' }],
+        'FIB-01':       [{ initials: 'CH', color: 'bg-indigo-500' }],
+        'E-TEST-02':    [{ initials: 'AS', color: 'bg-emerald-600' }, { initials: 'LY', color: 'bg-orange-400' }],
+        'XRD-01':       [{ initials: 'TH', color: 'bg-amber-500' }]
       };
 
-      if (['ROLE_SYSADMIN', 'ROLE_MACHINE_OWNER'].includes(role)) {
-        machines['SEM-01'].unshift({ content: userContent, color: 'bg-corporate-blue' });
-        machines['E-TEST-02'].unshift({ content: userContent, color: 'bg-corporate-blue' });
-      }
-      if (['ROLE_SYSADMIN', 'ROLE_LAB_MANAGER', 'ROLE_LAB_OPERATOR'].includes(role)) {
-        machines['BAKE-OVEN-01'].unshift({ content: userContent, color: 'bg-corporate-blue' });
-        machines['XRD-01'].unshift({ content: userContent, color: 'bg-corporate-blue' });
-      }
+      Object.keys(machineStates).forEach(id => {
+        // Sanitize ID for DOM selection (replace space with dash)
+        const sanitizedId = id.replace(/\s+/g, '-');
+        const container = document.getElementById(`owners-${sanitizedId}`);
+        if (!container) return;
 
-      for (const [machId, owners] of Object.entries(machines)) {
-        const container = document.getElementById(`owners-${machId}`);
-        if (container) {
-          container.innerHTML = owners.map(o => `<div class="w-6 h-6 rounded-full ${o.color} text-white flex items-center justify-center text-[10px] font-bold border border-white shadow-sm transition-all overflow-hidden">${o.content}</div>`).join('');
+        let owners = [...(ownerMap[id] || [])];
+        
+        // RBAC dynamic injection: If current user has management/ownership rights, add them to the list
+        if (['ROLE_SYSADMIN', 'ROLE_LAB_MANAGER', 'ROLE_MACHINE_OWNER'].includes(role)) {
+            // Unshift current session user to the front
+            owners.unshift({ isUser: true, initials: initials, color: 'bg-corporate-blue' });
         }
-      }
+
+        container.innerHTML = owners.map(o => `
+            <div class="w-6 h-6 rounded-full ${o.color} text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-sm transition-all overflow-hidden">
+                ${o.isUser ? userAvatar : o.initials}
+            </div>
+        `).join('');
+      });
     }
 
     function setLanguage(lang) {
