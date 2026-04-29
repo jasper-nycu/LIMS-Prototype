@@ -1,49 +1,55 @@
-# Cloud-Native Laboratory Information Management System (LIMS) 🔬
+# Cloud-Native Laboratory Information Management System (LIMS)
 
-![Version](https://img.shields.io/badge/version-1.0.0--prototype-blue.svg)
-![Tech Stack](https://img.shields.io/badge/Tech-HTML5%20%7C%20TailwindCSS%20%7C%20Vanilla%20JS-emerald.svg)
+![Version](https://img.shields.io/badge/version-1.1.0--prototype-blue.svg)
+![Tech Stack](https://img.shields.io/badge/Tech-HTML5%20%7C%20TailwindCSS%20%7C%20Vanilla%20JS%20%7C%20Chart.js-emerald.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-Cloud--Native%20Ready-blueviolet.svg)
 
-A high-fidelity, interactive frontend prototype for a Cloud-Native Laboratory Information Management System. This project is meticulously designed to align with enterprise-level semiconductor lab operations, providing seamless workflows from request submission to machine dispatching.
+A high-fidelity, interactive frontend prototype designed for enterprise-level semiconductor laboratory operations. This system provides a comprehensive workflow encompassing request submission, managerial approval, WIP (Work-in-Progress) sorting, dynamic machine dispatching, and real-time capacity analytics.
 
-## 🌟 Executive Summary
+## Overview
 
-In semiconductor R&D and manufacturing, quality control relies heavily on specialized laboratories. This LIMS prototype streamlines the entire lifecycle of wafer testing:
-1. **Fab Users** submit detailed experiment requests.
-2. **Lab Managers** perform capacity checks and approve requests.
-3. **Lab Operators** manage WIP (Work-in-Progress) sorting and dispatch wafers to specific testing machines.
+In semiconductor R&D and manufacturing, quality control relies heavily on specialized laboratories. This LIMS prototype digitizes and streamlines the lifecycle of wafer testing:
+1. **Fab Users** submit detailed experimental requests.
+2. **Lab Managers** evaluate machine capacity and execute approval/rejection workflows.
+3. **Lab Operators** manage WIP queues and dispatch wafers to designated machines.
+4. **Machine Owners** oversee equipment status, perform preventive maintenance (PM), and resolve system alarms.
 
-## ✨ Core Features
+## Core Architecture & Features
 
-### 1. End-to-End Workflow Integration
-* **Fab Request (Order Creation):** Iterative Wafer ID input with strictly enforced regex validation (`W-XXXX`). Supports multi-select experiments and priority assignment.
-* **Manager Dashboard (Approval Queue):** Real-time approval workflow. Includes order remarks parsing, capacity evaluation, and dynamic pending counters.
-* **Lab Operations (WIP & Dispatch):** Closed-loop data flow. Approved requests are automatically deconstructed into individual wafers and queued in the WIP sorting area. Features a "Select All" mechanism and direct machine dispatching.
+### 1. Request & Approval Workflow
+* **Order Creation:** Iterative Wafer ID input with strict Regex validation (`W-XXXX`). Supports multi-experiment selection across different lab routing requirements (RA, MA, FA).
+* **Managerial Review:** Real-time approval queue with capacity check integration. Features a closed-loop rejection mechanism requiring justification, automatically syncing notifications back to the requester.
 
-### 2. Machine Management & FSM (Finite State Machine)
-* Real-time machine status monitoring (`PROCESSING`, `IDLE`, `ALARM`).
-* Dynamic machine ownership assignment based on Role-Based Access Control (RBAC).
-* Built-in incident response (e.g., resolving vacuum loss alarms) and history logging.
+### 2. WIP Sorting & Machine Dispatching
+* **1NF Data Normalization:** Approved requests are automatically parsed using Cartesian product logic, breaking down complex orders into single wafer-experiment pairs for granular WIP sorting.
+* **Capacity Constraint Validation:** Dispatching logic utilizes `Set` data structures to ensure physical wafer uniqueness, preventing machine capacity overflow during batch loading.
+* **Cascading Configurations:** Dynamic linkage between Target Machine and Recipe selections based on real-time equipment availability.
 
-### 3. Advanced Analytics & Gantt Charts
-* Visualized weekly Machine Idle Time utilizing interactive Gantt chart logic.
-* Automatically calculated Average Utilization metrics across various tool groups (SEM, BAKE, TEM, FIB, E-TEST, XRD).
+### 3. FSM-Based Machine Management
+* **Finite State Machine (FSM):** Strict state transition logic handling `IDLE`, `PROCESSING`, `ALARM`, and `MAINTENANCE` states.
+* **Incident Management:** Built-in simulation for vacuum loss or mechanical faults, instantly halting utilization calculations and triggering localized notifications.
+* **Preventive Maintenance:** Dedicated maintenance toggles to securely lock machines out of the dispatching queue during PM cycles.
 
-### 4. Enterprise-Grade UX/UI
-* **Responsive Web Design (RWD):** Mobile-first approach with an off-canvas sidebar, smart grid stacking, and scrollable data tables for on-the-go accessibility.
-* **i18n Localization:** Instant switching between English (EN) and Traditional Chinese (TW) without page reloads.
-* **Notification Center:** Dynamic alert system with unread counters and interactive dismissals.
+### 4. Advanced Capacity Analytics
+* **Time-Series Visualization:** Integration with Chart.js to render utilization metrics.
+* **Segmented Dashboards:** Equipment data is intelligently split into "Analysis" (SEM, TEM, FIB) and "Process & Test" (BAKE, E-TEST, XRD) for optimized readability.
+* **Dynamic Time Ranges:** Granular utilization tracking supporting views from the last 5 minutes up to the past week.
 
-## 🛠️ Technology Stack
+### 5. Enterprise UI & Security Control
+* **Role-Based Access Control (RBAC):** UI dynamically adapts to primary roles (System Admin, Lab Supervisor, Lab Operator, Machine Owner, Fab User), restricting navigation and action buttons.
+* **Responsive Design:** Mobile-first architecture featuring collapsible sidebars and off-canvas layouts for cross-device accessibility.
+* **Data Sanitization:** SAP-standard automated formatting for user profile contact fields.
 
-* **Frontend:** HTML5, Tailwind CSS (via CDN for rapid prototyping)
-* **Scripting:** Vanilla JavaScript (ES6+)
-* **Icons & Typography:** Google Material Symbols, Public Sans Font
-* **Deployment:** GitHub Pages (Zero-build-step architecture)
+## Technology Stack
 
-## 🚀 Getting Started
+* **Frontend Framework:** HTML5, Tailwind CSS
+* **Data Visualization:** Chart.js
+* **Logic & State:** Vanilla JavaScript (ES6+)
+* **Icons & Typography:** Google Material Symbols, Public Sans
 
-Since this is a pure frontend prototype, no complex build tools or dependencies are required.
+## Getting Started
+
+This is a pure frontend architecture designed with zero-build-step principles. No external dependencies or package managers are required.
 
 1. Clone the repository:
    ```bash
