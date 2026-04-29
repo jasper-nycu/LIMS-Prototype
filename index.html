@@ -1205,7 +1205,7 @@
                 let btmRow = '';
                 if (['ROLE_LAB_OPERATOR', 'ROLE_SYSADMIN'].includes(role)) {
                     btmRow = `<div class="mt-2 flex gap-2 w-full">
-                        <button onclick="openEmergencyUnload('${id}')" class="${btnEmg}" data-i18n="btn_emg_unload">EMG Unload</button>
+                        <button disabled class="${btnEmg} opacity-40 cursor-not-allowed" data-i18n="btn_emg_unload">EMG Unload</button>
                         <button onclick="triggerAlarm('${id}')" class="${btnErr}" data-i18n="btn_trigger_alarm">Simulate Error</button>
                     </div>`;
                 }
@@ -1448,6 +1448,11 @@
 
     let currentEmergencyMachId = null;
     function openEmergencyUnload(machId) {
+        const m = machineStates[machId];
+        if (!m || m.state !== 'PROCESSING') {
+            const msg = currentAppLang === 'en' ? 'Machine is not processing any wafers.' : '機台目前並未運作，無法執行緊急下貨。';
+            return alert(msg);
+        }
         currentEmergencyMachId = machId;
         document.getElementById('emergency-mach-id').innerText = machId;
         openModal('emergency-unload-modal');
