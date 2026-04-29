@@ -1402,11 +1402,17 @@
       // Separated permissions: Machine Owner can manage machines (PM/Maintenance), but only Admin/Manager can change Recipes
       const btnManageMach = document.querySelector('button[onclick="openManageMachines()"]');
       const btnManageRec = document.querySelector('button[onclick="openManageRecipes()"]');
+      const btnDispatch = document.querySelector('button[onclick="executeDispatch()"]');
+      
       if (btnManageMach) {
           btnManageMach.style.display = ['ROLE_SYSADMIN', 'ROLE_LAB_MANAGER', 'ROLE_MACHINE_OWNER'].includes(roleEnum) ? 'flex' : 'none';
       }
       if (btnManageRec) {
           btnManageRec.style.display = ['ROLE_SYSADMIN', 'ROLE_LAB_MANAGER'].includes(roleEnum) ? 'flex' : 'none';
+      }
+      if (btnDispatch) {
+          // Strict Dispatch Permission: Only Admins and Operators can dispatch wafers
+          btnDispatch.style.display = ['ROLE_SYSADMIN', 'ROLE_LAB_OPERATOR'].includes(roleEnum) ? 'flex' : 'none';
       }
     }
 
