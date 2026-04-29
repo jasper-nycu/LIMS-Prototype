@@ -364,7 +364,6 @@
               <p class="text-xs md:text-sm text-slate-500 mt-1" data-i18n="prof_desc">Manage your personal information and security settings.</p>
             </div>
             <div class="flex items-center gap-2 md:gap-3">
-              <button onclick="dummyAlert('Export Logs')" class="rounded-lg border border-slate-200 bg-white px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm" data-i18n="btn_exp_logs">Export Logs</button>
               <button onclick="handleLogout()" class="rounded-lg border border-red-100 bg-red-50/50 px-3 md:px-4 py-2 text-xs md:text-sm font-bold text-red-500 hover:bg-red-50 transition-colors shadow-sm flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[18px]">logout</span>
                 <span data-i18n="btn_logout">Sign Out</span>
@@ -491,12 +490,6 @@
                   </div>
                 </div>
               </section>
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl bg-slate-100 px-5 md:px-6 py-4 gap-3">
-                <div class="flex items-center gap-2 md:gap-3 text-slate-500">
-                  <span class="material-symbols-outlined text-base md:text-lg">info</span><span class="text-[10px] md:text-xs uppercase tracking-wider font-semibold" data-i18n="active_sess">Active Sessions: 1</span>
-                </div>
-                <button onclick="dummyAlert('Revoke Sessions')" class="text-xs font-bold text-red-500 hover:underline sm:text-right" data-i18n="btn_revoke">Revoke All Sessions</button>
-              </div>
             </div>
           </div>
         </div>
@@ -601,6 +594,35 @@
             </div>
           </div>
 
+          <div id="emergency-unload-modal" class="bg-white rounded-2xl shadow-xl w-full max-w-md hidden transform scale-95 transition-transform z-[110]">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+              <h3 class="font-bold text-lg text-red-600 flex items-center gap-2"><span class="material-symbols-outlined">warning</span> <span data-i18n="emg_unload_title">Emergency Unload</span></h3>
+              <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 focus:outline-none"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="p-6 space-y-4">
+              <p class="text-sm text-slate-600"><span data-i18n="machine">Machine</span> <span id="emergency-mach-id" class="font-bold text-slate-900 font-mono"></span> <span data-i18n="emg_unload_desc">is currently processing. Choose how to handle the unloaded wafers:</span></p>
+              <div class="flex flex-col gap-3 mt-4">
+                <button onclick="executeEmergencyUnload('scrap')" class="w-full px-4 py-3 bg-red-50 text-red-600 border border-red-200 text-sm font-bold rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">delete_forever</span> <span data-i18n="btn_scrap">Scrap Wafers (Discard)</span>
+                </button>
+                <button onclick="executeEmergencyUnload('reuse')" class="w-full px-4 py-3 bg-amber-50 text-amber-600 border border-amber-200 text-sm font-bold rounded-xl hover:bg-amber-100 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                  <span class="material-symbols-outlined text-[18px]">assignment_return</span> <span data-i18n="btn_reuse">Reuse Wafers (Return to WIP)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="warning-modal" class="bg-white rounded-3xl shadow-2xl w-full max-w-sm hidden transform scale-95 transition-transform z-[130]">
+            <div class="p-6 text-center space-y-4">
+              <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-2 border-8 border-red-50/50">
+                <span class="material-symbols-outlined text-4xl text-red-500">error</span>
+              </div>
+              <h3 id="warning-title" class="text-xl font-bold text-slate-900">Warning</h3>
+              <p id="warning-msg" class="text-sm text-slate-500 font-medium leading-relaxed"></p>
+              <button onclick="closeModal()" class="w-full mt-4 px-4 py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-md">Understood</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -627,9 +649,9 @@
     };
 
     const labExperiments = {
-      'LAB_RA': ['exp_bake', 'exp_etest', 'exp_tshock', 'exp_humid'],
-      'LAB_MA': ['exp_sem', 'exp_deep', 'exp_comp', 'exp_xrd'],
-      'LAB_FA': ['exp_defect', 'exp_cross', 'exp_fib']
+      'LAB_RA': ['exp_bake', 'exp_etest'],
+      'LAB_MA': ['exp_sem', 'exp_deep', 'exp_xrd'],
+      'LAB_FA': ['exp_fib']
     };
 
     const translations = {
@@ -673,6 +695,7 @@
         'time_1d': 'Last 1 Day', 'time_3d': 'Last 3 Days', 'time_1w': 'Last 1 Week', 'calc_rule': '* Utilization is tracked dynamically.',
         'priv_all': 'Full System Access', 'priv_sec': 'Security Settings Control', 'priv_audit': 'Audit Logs Access', 'priv_ana': 'Laboratory Analytics', 'priv_appr': 'Request Approval', 'priv_inv': 'Inventory Management', 'priv_disp': 'Machine Dispatching', 'priv_sim': 'Alarm Simulation', 'priv_unload': 'Wafer Unloading', 'priv_res': 'Machine Alarm Resolution', 'priv_maint': 'Maintenance Logs', 'priv_req': 'Request Creation', 'priv_track': 'Request Tracking', 'priv_view': 'View Own Profile', 'cap_exceed': 'Capacity exceeded! Available slots: ',
         'modal_mach_title': 'Manage Machines', 'modal_rec_title': 'Manage Recipes', 'btn_add_rec': 'Add', 'stat_online': 'Online', 'stat_maint': 'Maintenance', 'btn_online': 'Set Online', 'err_maint': 'Cannot modify while processing.',
+        'emg_unload_title': 'Emergency Unload', 'machine': 'Machine', 'emg_unload_desc': 'is currently processing. Choose how to handle the unloaded wafers:', 'btn_emg_unload': 'EMG Unload', 'btn_scrap': 'Scrap Wafers (Discard)', 'btn_reuse': 'Reuse Wafers (Return to WIP)', 'wafer_scrapped': 'Wafers Scrapped', 'wafer_reused': 'Wafers Reused', 'wafer_scrapped_desc': 'wafers have been scrapped.', 'wafer_reused_desc': 'wafers returned to WIP.',
         'auth_title_login': 'LIMS Portal', 'auth_title_reg': 'Create Account', 'auth_subtitle': 'Laboratory Information Management System',
         'lbl_emp_id': 'Employee ID', 'lbl_pwd': 'Password', 'lbl_fname': 'First Name', 'lbl_lname': 'Last Name',
         'lbl_email': 'E-mail', 'lbl_conf_pwd': 'Confirm Password', 'btn_signin': 'Sign In', 'btn_register': 'Register',
@@ -725,6 +748,7 @@
         'calc_rule': '* 利用率 (%) 計算邏輯為：執行派發至下貨之間的時間差。',
         'priv_all': '完整系統存取權', 'priv_sec': '安全性設定控制', 'priv_audit': '稽核日誌存取', 'priv_ana': '實驗室產能分析', 'priv_appr': '委託單簽核', 'priv_inv': '耗材庫存管理', 'priv_disp': '機台派貨權限', 'priv_sim': '模擬報警控制', 'priv_unload': '晶圓下貨權限', 'priv_res': '解除機台警報', 'priv_maint': '維修日誌存取', 'priv_req': '建立委託單', 'priv_track': '委託單進度追蹤', 'priv_view': '檢視個人檔案', 'cap_exceed': '超出機台容量！剩餘可容納片數：',
         'modal_mach_title': '機台維護設定', 'modal_rec_title': '實驗參數管理', 'btn_add_rec': '新增', 'stat_online': '運作中', 'stat_maint': '維護中 (PM)', 'btn_online': '恢復上線', 'err_maint': '機台執行中，無法變更維護狀態。',
+        'emg_unload_title': '緊急下貨處理', 'machine': '機台', 'emg_unload_desc': '正在運作中。請選擇如何處置卸載的晶圓：', 'btn_emg_unload': '緊急下貨', 'btn_scrap': '作廢晶圓 (直接銷毀)', 'btn_reuse': '重用晶圓 (退回待處理區)', 'wafer_scrapped': '晶圓已作廢', 'wafer_reused': '晶圓已重用', 'wafer_scrapped_desc': '片晶圓已作廢並從系統中移除。', 'wafer_reused_desc': '片晶圓已退回待分貨區 (WIP)。',
         'auth_title_login': 'LIMS 系統入口', 'auth_title_reg': '建立帳號', 'auth_subtitle': '雲原生實驗室資訊管理系統',
         'lbl_emp_id': '員工編號', 'lbl_pwd': '密碼', 'lbl_fname': '名字', 'lbl_lname': '姓氏',
         'lbl_email': '電子郵件', 'lbl_conf_pwd': '確認密碼', 'btn_signin': '登入系統', 'btn_register': '註冊帳號',
@@ -809,6 +833,15 @@
        if (list && list.children.length === 0) {
            list.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs" data-i18n="no_notif">${translations[currentAppLang]['no_notif']}</div>`;
        }
+    }
+
+    function updatePendingCounter() {
+      const tbody = document.getElementById('approval-queue-body');
+      const counter = document.getElementById('pending-number');
+      if (tbody && counter) {
+        const count = tbody.querySelectorAll('tr[data-reqid]').length;
+        counter.innerText = count;
+      }
     }
 
     function checkEmptyQueue() {
@@ -1103,79 +1136,114 @@
         const container = document.getElementById('machine-cards-container');
         if (!container) return;
         container.innerHTML = '';
-        const role = document.getElementById('input-user-role')?.value || 'ROLE_SYSADMIN';
+
+        const roleSelect = document.getElementById('input-user-role');
+        const role = roleSelect ? roleSelect.value : 'ROLE_SYSADMIN';
 
         for (const [id, m] of Object.entries(machineStates)) {
-            let borderColor = 'border-slate-200 hover:border-corporate-blue';
-            let shadow = 'shadow-sm'; let pulseHtml = ''; let titleColor = 'text-slate-900'; let capColor = 'text-slate-400';
-            let badgeBg = 'bg-slate-100'; let badgeText = 'text-slate-600'; let stateInfoHtml = ''; let actionButtonsHtml = '';
-            
-            let loadedStr = m.loaded.length > 0 ? m.loaded.join(', ') : (currentAppLang === 'en' ? 'None' : '無');
-            let isFull = m.loaded.length >= m.cap;
-            let capDisplay = `<p class="text-xs ${isFull ? 'text-red-500 font-bold' : capColor}">Cap: ${m.loaded.length} / ${m.cap} Wafers</p>`;
+            let borderColor = 'border-slate-200';
+            let titleColor = 'text-slate-800';
+            let capColor = 'text-slate-500';
+            let badgeBg = 'bg-slate-100';
+            let badgeText = 'text-slate-600';
+            let pulseHtml = '';
+            let shadow = 'shadow-sm';
+            let stateInfoHtml = '';
+            let actionButtonsHtml = '';
+            const loadedStr = m.loaded.length > 0 ? m.loaded.join(', ') : 'None';
+            const capDisplay = `<div class="flex justify-between items-center mb-1"><span class="text-[10px] font-bold ${capColor} uppercase" data-i18n="lbl_cap">Capacity</span><span class="text-[10px] font-mono font-bold ${titleColor}">${m.loaded.length} / ${m.cap}</span></div>`;
+
+            const btnBase = "py-2 text-[10px] font-bold rounded-lg border transition-all shadow-sm flex-1 flex items-center justify-center";
+            const btnLogs = `${btnBase} bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100`;
+            const btnUnload = `${btnBase} bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100`;
+            const btnEmg = `${btnBase} bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-100`;
+            const btnErr = `${btnBase} bg-red-50 text-red-600 border-red-100 hover:bg-red-100`;
+            const btnClear = `${btnBase} bg-red-500 text-white border-transparent hover:bg-red-600`;
+            const btnOnline = `${btnBase} bg-slate-300 text-slate-700 border-transparent hover:bg-slate-400`;
+
+            const viewLogsBtn = `<button onclick="dummyAlert('View Logs')" class="${btnLogs}" data-i18n="btn_view_logs">View Logs</button>`;
 
             if (m.state === 'PROCESSING') {
                 borderColor = 'border-emerald-400'; shadow = 'shadow-[0_0_15px_rgba(16,185,129,0.2)]';
                 pulseHtml = '<div class="absolute top-0 left-0 w-full h-1 bg-emerald-500 animate-pulse"></div>';
                 badgeBg = 'bg-emerald-100'; badgeText = 'text-emerald-700';
-                stateInfoHtml = `<div class="bg-emerald-50 rounded p-2 mb-3 border border-emerald-100/50"><p class="text-[10px] font-bold text-emerald-700 uppercase" data-i18n="lbl_loaded">Loaded:</p><p class="text-xs font-mono text-emerald-600 mt-0.5">${loadedStr}</p></div>`;
-                let btns = [];
+                stateInfoHtml = `<div class="bg-emerald-50 rounded p-2 border border-emerald-100/50"><p class="text-[10px] font-bold text-emerald-700 uppercase" data-i18n="lbl_loaded">Loaded:</p><p class="text-xs font-mono text-emerald-600 mt-0.5 break-all">${loadedStr}</p></div>`;
+                
+                let btns = [viewLogsBtn];
                 if (['ROLE_LAB_OPERATOR', 'ROLE_LAB_MANAGER', 'ROLE_SYSADMIN'].includes(role)) {
-                    btns.push(`<button onclick="unloadMachine('${id}')" class="w-full py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded border border-emerald-200 hover:bg-emerald-100 transition-colors" data-i18n="btn_unload">${translations[currentAppLang]['btn_unload']||'Unload Wafers'}</button>`);
+                    btns.push(`<button onclick="unloadMachine('${id}')" class="${btnUnload}" data-i18n="btn_unload">Unload</button>`);
                 }
+                let topRow = `<div class="flex gap-2 w-full">${btns.join('')}</div>`;
+                let btmRow = '';
                 if (['ROLE_LAB_OPERATOR', 'ROLE_SYSADMIN'].includes(role)) {
-                    btns.push(`<button onclick="triggerAlarm('${id}')" class="w-full py-1.5 bg-white text-slate-400 text-xs font-bold rounded border border-slate-200 hover:text-red-500 hover:border-red-200 transition-colors" data-i18n="btn_trigger_alarm">${translations[currentAppLang]['btn_trigger_alarm']||'Simulate Error'}</button>`);
+                    btmRow = `<div class="mt-2 flex gap-2 w-full">
+                        <button onclick="openEmergencyUnload('${id}')" class="${btnEmg}" data-i18n="btn_emg_unload">EMG Unload</button>
+                        <button onclick="triggerAlarm('${id}')" class="${btnErr}" data-i18n="btn_trigger_alarm">Simulate Error</button>
+                    </div>`;
                 }
-                if(btns.length > 0) actionButtonsHtml = `<div class="mt-3 flex gap-2">${btns.join('')}</div>`;
+                actionButtonsHtml = `<div class="flex flex-col w-full">${topRow}${btmRow}</div>`;
             } else if (m.state === 'ALARM') {
-                borderColor = 'border-red-300 bg-red-50/30'; titleColor = 'text-red-900';
-                badgeBg = 'bg-red-100'; badgeText = 'text-red-700';
-                let loadedHtml = m.loaded.length > 0 ? `<div class="mt-2 pt-2 border-t border-red-200/50"><p class="text-[10px] font-bold text-red-700 uppercase" data-i18n="lbl_loaded">${translations[currentAppLang]['lbl_loaded']||'Loaded:'}</p><p class="text-xs font-mono text-red-600 mt-0.5">${loadedStr}</p></div>` : '';
-                stateInfoHtml = `<div class="bg-red-100/50 rounded p-2 mb-3 border border-red-200"><p class="text-[10px] font-bold text-red-700 uppercase" data-i18n="lbl_error">${translations[currentAppLang]['lbl_error']||'Error:'}</p><p class="text-xs font-mono text-red-600 mt-0.5">${m.error}</p>${loadedHtml}</div>`;
+                borderColor = 'border-red-300 bg-red-50/30'; badgeBg = 'bg-red-100'; badgeText = 'text-red-700';
+                let loadedHtml = m.loaded.length > 0 ? `<div class="mt-2 pt-2 border-t border-red-200/50"><p class="text-[10px] font-bold text-red-700 uppercase" data-i18n="lbl_loaded">Loaded:</p><p class="text-xs font-mono text-red-600 mt-0.5">${loadedStr}</p></div>` : '';
+                stateInfoHtml = `<div class="bg-red-100/50 rounded p-2 border border-red-200"><p class="text-[10px] font-bold text-red-700 uppercase" data-i18n="lbl_error">Error:</p><p class="text-xs font-mono text-red-600 mt-0.5">${m.error}</p>${loadedHtml}</div>`;
+                let btns = [viewLogsBtn];
                 if (['ROLE_MACHINE_OWNER', 'ROLE_SYSADMIN'].includes(role)) {
-                    actionButtonsHtml = `<button onclick="resolveAlarm('${id}')" class="w-full mt-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded shadow-sm hover:bg-red-600 transition-colors" data-i18n="btn_clear_alarm">${translations[currentAppLang]['btn_clear_alarm']||'Resolve Alarm'}</button>`;
+                    btns.push(`<button onclick="resolveAlarm('${id}')" class="${btnClear}" data-i18n="btn_clear_alarm">Resolve</button>`);
                 }
+                actionButtonsHtml = `<div class="flex gap-2 w-full">${btns.join('')}</div>`;
             } else if (m.state === 'MAINTENANCE') {
-                borderColor = 'border-slate-300 bg-slate-100'; titleColor = 'text-slate-500'; capColor = 'text-slate-400';
-                badgeBg = 'bg-slate-200'; badgeText = 'text-slate-600';
-                stateInfoHtml = `<div class="bg-slate-100 rounded p-2 mb-3 border border-slate-200"><p class="text-[10px] font-bold text-slate-500 uppercase text-center mt-2 mb-2" data-i18n="stat_maint">${translations[currentAppLang]['stat_maint'] || 'MAINTENANCE'}</p></div>`;
+                borderColor = 'border-slate-300 bg-slate-100'; badgeBg = 'bg-slate-200'; badgeText = 'text-slate-600';
+                stateInfoHtml = `<div class="bg-slate-200/50 rounded p-2 border border-slate-200 border-dashed flex items-center justify-center h-16"><p class="text-xs font-bold text-slate-500 uppercase" data-i18n="stat_maint">MAINTENANCE</p></div>`;
+                let btns = [viewLogsBtn];
                 if (['ROLE_MACHINE_OWNER', 'ROLE_SYSADMIN'].includes(role)) {
-                     actionButtonsHtml = `<button onclick="toggleMaintenance('${id}')" class="w-full mt-3 py-1.5 bg-slate-300 text-slate-700 text-xs font-bold rounded shadow-sm hover:bg-slate-400 transition-colors" data-i18n="btn_online">${translations[currentAppLang]['btn_online'] || 'Set Online'}</button>`;
+                    btns.push(`<button onclick="toggleMaintenance('${id}')" class="${btnOnline}" data-i18n="btn_online">Set Online</button>`);
                 }
+                actionButtonsHtml = `<div class="flex gap-2 w-full">${btns.join('')}</div>`;
             } else {
-                stateInfoHtml = `<div class="bg-slate-50 rounded p-2 mb-3 border border-slate-100 border-dashed flex items-center justify-center min-h-[46px]"><p class="text-xs font-mono text-slate-400 text-center" data-i18n="lbl_ready">${translations[currentAppLang]['lbl_ready']||'Ready for dispatch'}</p></div>`;
-                let btns = [];
-                btns.push(`<button onclick="dummyAlert('View Logs')" class="w-full py-1.5 bg-slate-50 text-slate-600 text-xs font-bold rounded border border-slate-200 hover:bg-slate-100 transition-colors" data-i18n="btn_view_logs">${translations[currentAppLang]['btn_view_logs']||'View Logs'}</button>`);
+                stateInfoHtml = `<div class="bg-slate-50 rounded p-2 border border-slate-100 border-dashed flex items-center justify-center h-16"><p class="text-xs font-mono text-slate-400 text-center" data-i18n="lbl_ready">Ready for dispatch</p></div>`;
+                let topRow = `<div class="flex gap-2 w-full">${viewLogsBtn}</div>`;
+                let btmRow = '';
                 if (['ROLE_LAB_OPERATOR', 'ROLE_SYSADMIN'].includes(role)) {
-                    btns.push(`<button onclick="triggerAlarm('${id}')" class="w-full py-1.5 bg-white text-slate-400 text-xs font-bold rounded border border-slate-200 hover:text-red-500 hover:border-red-200 transition-colors" data-i18n="btn_trigger_alarm">${translations[currentAppLang]['btn_trigger_alarm']||'Simulate Error'}</button>`);
+                    btmRow = `<div class="mt-2 flex gap-2 w-full">
+                        <button onclick="openEmergencyUnload('${id}')" class="${btnEmg}" data-i18n="btn_emg_unload">EMG Unload</button>
+                        <button onclick="triggerAlarm('${id}')" class="${btnErr}" data-i18n="btn_trigger_alarm">Simulate Error</button>
+                    </div>`;
                 }
-                actionButtonsHtml = `<div class="mt-3 flex gap-2">${btns.join('')}</div>`;
+                actionButtonsHtml = `<div class="flex flex-col w-full">${topRow}${btmRow}</div>`;
             }
 
-            const stateI18n = m.state === 'PROCESSING' ? 'fsm_proc' : (m.state === 'ALARM' ? 'fsm_alarm' : (m.state === 'MAINTENANCE' ? 'stat_maint' : 'fsm_idle'));
+            let stateTransKey = m.state === 'PROCESSING' ? 'fsm_proc' : m.state === 'ALARM' ? 'fsm_alarm' : m.state === 'MAINTENANCE' ? 'stat_maint' : 'fsm_idle';
+
             const cardHtml = `
-            <div class="bg-white p-5 rounded-2xl border ${borderColor} ${shadow} relative overflow-hidden flex flex-col transition-all">
-              ${pulseHtml}
-              <div class="flex justify-between items-start mb-2">
-                <div><h3 class="font-bold text-lg ${titleColor}">${id}</h3>${capDisplay}</div>
-                <span class="px-2 py-1 ${badgeBg} ${badgeText} text-[10px] font-bold rounded flex items-center gap-1">
-                  ${m.state === 'ALARM' ? '<span class="material-symbols-outlined text-[12px]">warning</span>' : ''}
-                  <span data-i18n="${stateI18n}">${translations[currentAppLang][stateI18n] || m.state}</span>
-                </span>
-              </div>
-              <div class="text-xs text-slate-500 mb-3"><span data-i18n="${m.expKey}">${translations[currentAppLang][m.expKey] || m.name}</span></div>
-              ${stateInfoHtml}
-              <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
-                <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
-                <div id="owners-${id.replace(/\s+/g, '-')}" class="flex -space-x-2 machine-owner-list" data-machine="${id}"></div>
-              </div>
-              ${actionButtonsHtml}
+            <div class="bg-white rounded-2xl p-4 md:p-5 border-2 ${borderColor} ${shadow} relative overflow-hidden flex flex-col h-[380px] transition-all">
+                ${pulseHtml}
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-bold text-base md:text-lg ${titleColor}">${id}</h3>
+                        <p class="text-xs text-slate-500 font-mono mt-0.5" data-i18n="${m.expKey}">${translations[currentAppLang][m.expKey] || m.name}</p>
+                    </div>
+                    <span class="px-2 py-1 ${badgeBg} ${badgeText} text-[10px] font-bold rounded shadow-sm" data-i18n="${stateTransKey}">${translations[currentAppLang][stateTransKey] || m.state}</span>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 mb-4">
+                    ${stateInfoHtml}
+                </div>
+
+                <div class="mt-auto pt-2">
+                    ${capDisplay}
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 mt-1.5 mb-4 overflow-hidden">
+                        <div class="${m.state === 'ALARM' ? 'bg-red-500' : 'bg-corporate-blue'} h-1.5 rounded-full transition-all duration-500" style="width: ${m.currentUtil}%"></div>
+                    </div>
+                    ${actionButtonsHtml}
+                    <div class="flex justify-between items-center pt-3 border-t border-slate-100 mt-4">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="fsm_owners">Owners</span>
+                        <div id="owners-${id.replace(/\s+/g, '-')}" class="flex -space-x-2 machine-owner-list" data-machine="${id}"></div>
+                    </div>
+                </div>
             </div>`;
             container.innerHTML += cardHtml;
         }
-        const firstName = document.getElementById('input-user-first-name')?.value.trim() || 'Jasper';
-        const lastName = document.getElementById('input-user-last-name')?.value.trim() || 'Li';
-        renderMachineOwners(role, `${firstName} ${lastName}`);
+        syncUserIdentity(); // Ensure owner avatars render correctly
     }
 
     function updateMachineDropdowns() {
@@ -1187,15 +1255,15 @@
 
         for (const [id, m] of Object.entries(machineStates)) {
             const stateStr = m.state === 'PROCESSING' ? (currentAppLang==='en'?'Processing':'執行中') : (m.state === 'ALARM' ? (currentAppLang==='en'?'Alarm':'異常') : (m.state === 'MAINTENANCE' ? (currentAppLang==='en'?'Maintenance':'維護中') : (currentAppLang==='en'?'Idle':'閒置')));
-            const disabled = (m.state === 'ALARM' || m.state === 'MAINTENANCE' || m.loaded.length >= m.cap) ? 'disabled' : '';
-            const availStr = m.cap - m.loaded.length;
+            const disabled = (m.state === 'ALARM' || m.state === 'MAINTENANCE' || m.state === 'PROCESSING' || m.loaded.length >= m.cap) ? 'disabled' : '';
+            const displayStr = m.state === 'PROCESSING' ? `(${stateStr})` : `(${stateStr} - ${m.cap - m.loaded.length} slots)`;
             const selected = (id === currentValue && disabled === '') ? 'selected' : '';
             if (selected) hasValidSelection = true;
             
-            select.innerHTML += `<option value="${id}" ${disabled}>${id} (${stateStr} - ${availStr} slots)</option>`;
+            select.innerHTML += `<option value="${id}" ${disabled}>${id} ${displayStr}</option>`;
         }
         if (!hasValidSelection) {
-            const firstAvail = Object.keys(machineStates).find(k => machineStates[k].state !== 'ALARM' && machineStates[k].state !== 'MAINTENANCE' && machineStates[k].loaded.length < machineStates[k].cap);
+            const firstAvail = Object.keys(machineStates).find(k => machineStates[k].state !== 'ALARM' && machineStates[k].state !== 'MAINTENANCE' && machineStates[k].state !== 'PROCESSING' && machineStates[k].loaded.length < machineStates[k].cap);
             if (firstAvail) select.value = firstAvail;
         }
         updateRecipeDropdown();
@@ -1246,18 +1314,59 @@
         machineStates[machId].loaded = [];
         machineStates[machId].currentUtil = 0; 
         renderMachineCards(); updateMachineDropdowns();
+        updateWipRowStates();
         if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
         alert(currentAppLang === 'en' ? `✅ Wafers unloaded from ${machId}.` : `✅ 已從 ${machId} 完成下貨。`);
     }
 
     function executeDispatch() {
-      const checkedWips = document.querySelectorAll('.wip-checkbox:checked');
-      if(checkedWips.length === 0) return alert(currentAppLang === 'en' ? "Please select at least one wafer to dispatch." : "請至少選擇一片晶圓進行派發。");
+      const showWarning = (title, msg) => {
+          document.getElementById('warning-title').innerText = title;
+          document.getElementById('warning-msg').innerText = msg;
+          openModal('warning-modal');
+      };
+
+      const checkedWips = Array.from(document.querySelectorAll('.wip-checkbox:checked')).filter(cb => !cb.disabled);
+      
+      if (checkedWips.length === 0) {
+          return showWarning(
+              currentAppLang === 'en' ? 'Selection Required' : '未選取晶圓',
+              currentAppLang === 'en' ? "Please select at least one wafer from the WIP queue." : "請從待處理區中至少勾選一片晶圓。"
+          );
+      }
+      
       const targetMach = document.getElementById('target-machine-select').value;
       const m = machineStates[targetMach];
       
-      if (m.state === 'ALARM' || m.state === 'MAINTENANCE') return alert(currentAppLang === 'en' ? "Machine is not available." : "機台異常或維護中。");
+      if (m.state === 'ALARM' || m.state === 'MAINTENANCE') {
+          return showWarning(
+              currentAppLang === 'en' ? 'Machine Unavailable' : '機台無法使用',
+              currentAppLang === 'en' ? "The selected machine is currently down or under maintenance." : "所選機台目前處於異常或歲修狀態。"
+          );
+      }
+      if (m.state === 'PROCESSING') {
+          return showWarning(
+              currentAppLang === 'en' ? 'Machine Busy' : '機台運作中',
+              currentAppLang === 'en' ? "Machine is currently processing. Cannot dispatch new wafers." : "機台正在運作中，無法派發新晶圓。"
+          );
+      }
       
+      let expMismatch = false;
+      checkedWips.forEach(cb => {
+          const expKey = cb.closest('tr').cells[2].getAttribute('data-i18n');
+          if (expKey && expKey !== m.expKey) expMismatch = true;
+      });
+      
+      if (expMismatch) {
+          const machExpName = translations[currentAppLang][m.expKey] || m.expKey;
+          return showWarning(
+              currentAppLang === 'en' ? 'Process Mismatch' : '製程不匹配',
+              currentAppLang === 'en' 
+                ? `Machine ${targetMach} exclusively supports [${machExpName}]. Please deselect incompatible wafers.` 
+                : `機台 ${targetMach} 僅支援執行 [${machExpName}]，請取消勾選不相符的晶圓。`
+          );
+      }
+
       // Collect incoming wafer IDs
       let incomingWafers = [];
       checkedWips.forEach(cb => incomingWafers.push(cb.closest('tr').cells[1].innerText));
@@ -1270,13 +1379,25 @@
           return alert(msg + (m.cap - m.loaded.length));
       }
 
+      window.waferPriorityMap = window.waferPriorityMap || {};
+      window.waferExpMap = window.waferExpMap || {};
+
       // Remove UI elements after passing capacity check
       checkedWips.forEach(cb => {
           const row = cb.closest('tr');
+          const waferId = row.cells[1].innerText.trim();
+          const expKey = row.cells[2].getAttribute('data-i18n');
+          
+          let priority = 'NORMAL';
+          if (row.innerHTML.includes('bg-red-50') || row.innerHTML.includes('CRITICAL')) priority = 'CRITICAL';
+          else if (row.innerHTML.includes('bg-amber-50') || row.innerHTML.includes('URGENT')) priority = 'URGENT';
+          
+          window.waferPriorityMap[waferId] = priority;
+          if (expKey) window.waferExpMap[waferId] = expKey;
+
           row.style.transition = 'all 0.4s ease'; row.style.opacity = '0'; row.style.transform = 'translateX(20px)';
           setTimeout(() => row.remove(), 400);
       });
-
       // Update machine state with unique wafer array
       m.loaded = Array.from(projectedWafers);
       m.currentUtil = Math.round((m.loaded.length / m.cap) * 100);
@@ -1285,9 +1406,114 @@
       setTimeout(() => {
           checkEmptyWip(); updateWipCount();
           renderMachineCards(); updateMachineDropdowns();
+          updateWipRowStates();
           if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
       }, 450);
       alert(currentAppLang === 'en' ? `✅ Successfully dispatched ${checkedWips.length} wafers to ${targetMach}!` : `✅ 成功派發 ${checkedWips.length} 片晶圓至 ${targetMach}！`);
+    }
+
+    function updateWipRowStates() {
+        // Collect all currently processing/loaded wafer IDs across all machines
+        const loadedWafers = new Set();
+        Object.values(machineStates).forEach(m => {
+            if (m.loaded && m.loaded.length > 0) {
+                m.loaded.forEach(w => loadedWafers.add(w));
+            }
+        });
+
+        // Scan the WIP table and gray out matching Wafer IDs
+        document.querySelectorAll('#wip-queue-body tr').forEach(row => {
+            if (row.classList.contains('empty-row')) return;
+            const waferCell = row.cells[1];
+            if (!waferCell) return;
+            
+            const waferId = waferCell.innerText.trim();
+            const cb = row.querySelector('.wip-checkbox');
+            if (!cb) return;
+
+            // If Wafer ID is processing elsewhere, disable and gray out
+            if (loadedWafers.has(waferId)) {
+                cb.disabled = true;
+                cb.checked = false;
+                row.classList.add('opacity-40', 'bg-slate-100', 'pointer-events-none');
+                row.title = currentAppLang === 'en' ? 'Wafer processing in another machine' : '此晶圓正在其他機台運作中';
+            } else {
+                cb.disabled = false;
+                row.classList.remove('opacity-40', 'bg-slate-100', 'pointer-events-none');
+                row.title = '';
+            }
+        });
+        updateWipCount();
+    }
+
+    let currentEmergencyMachId = null;
+    function openEmergencyUnload(machId) {
+        currentEmergencyMachId = machId;
+        document.getElementById('emergency-mach-id').innerText = machId;
+        openModal('emergency-unload-modal');
+    }
+
+    function executeEmergencyUnload(action) {
+        const m = machineStates[currentEmergencyMachId];
+        if (!m || m.state !== 'PROCESSING') return closeModal();
+
+        if (action === 'reuse') {
+            const wipBody = document.getElementById('wip-queue-body');
+            if (wipBody) {
+                const emptyRow = wipBody.querySelector('.empty-row');
+                if (emptyRow) emptyRow.remove();
+
+                m.loaded.forEach(waferId => {
+                    const wipRow = document.createElement('tr');
+                    wipRow.className = "hover:bg-slate-50 transition-colors";
+                    
+                    window.waferExpMap = window.waferExpMap || {};
+                    window.waferPriorityMap = window.waferPriorityMap || {};
+                    
+                    const expKey = window.waferExpMap[waferId] || m.expKey;
+                    const p = window.waferPriorityMap[waferId] || 'NORMAL';
+                    
+                    const transText = translations[currentAppLang][expKey] || expKey;
+                    const priorityBadgeHtml = getPriorityBadgeHtml(p);
+
+                    wipRow.innerHTML = `
+                        <td class="px-4 md:px-6 py-4"><input type="checkbox" class="wip-checkbox rounded text-corporate-blue focus:ring-corporate-blue"></td>
+                        <td class="px-4 md:px-6 py-4 font-mono font-bold">${waferId}</td>
+                        <td class="px-4 md:px-6 py-4 text-xs text-slate-500" data-i18n="${expKey}">${transText}</td>
+                        <td class="px-4 md:px-6 py-4">${priorityBadgeHtml}</td>
+                    `;
+                    wipBody.insertBefore(wipRow, wipBody.firstChild);
+                });
+            }
+            const title = translations[currentAppLang]['wafer_reused'] || 'Wafers Reused';
+            const desc = m.loaded.length + ' ' + (translations[currentAppLang]['wafer_reused_desc'] || 'wafers returned to WIP.');
+            addNotification(null, title, desc, 'info');
+        } else {
+            const scrappedSet = new Set(m.loaded);
+            document.querySelectorAll('#wip-queue-body tr').forEach(row => {
+                if (row.classList.contains('empty-row')) return;
+                const waferCell = row.cells[1];
+                if (waferCell && scrappedSet.has(waferCell.innerText.trim())) {
+                    row.remove();
+                }
+            });
+            const title = translations[currentAppLang]['wafer_scrapped'] || 'Wafers Scrapped';
+            const desc = m.loaded.length + ' ' + (translations[currentAppLang]['wafer_scrapped_desc'] || 'wafers have been scrapped.');
+            addNotification(null, title, desc, 'error');
+        }
+
+        // Reset machine state
+        m.loaded = [];
+        m.state = 'IDLE';
+        m.currentUtil = 0;
+        m.error = null;
+
+        closeModal();
+        renderMachineCards();
+        updateMachineDropdowns();
+        updateWipRowStates();
+        checkEmptyWip();
+        if (document.getElementById('view-capacity-analytics').classList.contains('active')) renderCapacityChart();
     }
 
     function renderCapacityChart() {
@@ -1753,6 +1979,7 @@
             checkEmptyQueue();
             updatePendingCounter();
             updateWipCount();
+            updateWipRowStates();
         }, 400);
     }
 
@@ -1809,7 +2036,11 @@
     }
 
     document.getElementById('selectAllWip')?.addEventListener('change', function() {
-        document.querySelectorAll('.wip-checkbox').forEach(cb => cb.checked = this.checked);
+        document.querySelectorAll('.wip-checkbox').forEach(cb => {
+            if (!cb.disabled) {
+                cb.checked = this.checked;
+            }
+        });
         updateWipCount();
     });
     document.getElementById('wip-queue-body')?.addEventListener('change', (e) => {
@@ -1879,6 +2110,7 @@
         updatePendingCounter();
         checkEmptyQueue();
         checkEmptyWip();
+        updateWipRowStates();
         checkEmptyNotifications();
         updatePriorityColor();
     }, 100);

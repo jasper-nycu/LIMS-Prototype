@@ -1,6 +1,6 @@
 # Cloud-Native Laboratory Information Management System (LIMS)
 
-![Version](https://img.shields.io/badge/version-1.3.0--prototype-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4.0--prototype-blue.svg)
 ![Tech Stack](https://img.shields.io/badge/Tech-HTML5%20%7C%20TailwindCSS%20%7C%20Vanilla%20JS%20%7C%20Chart.js-emerald.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-Cloud--Native%20Ready-blueviolet.svg)
 
@@ -28,12 +28,13 @@ In semiconductor R&D and manufacturing, quality control relies heavily on specia
 ### 3. WIP Sorting & Machine Dispatching
 * **1NF Data Normalization:** Approved requests are automatically parsed using Cartesian product logic, breaking down complex orders into single wafer-experiment pairs for granular WIP sorting.
 * **Physical Slot Deduplication:** Dispatching logic utilizes `Set` data structures to ensure physical wafer uniqueness. Even if one wafer requires multiple experiments, it strictly occupies only one physical capacity slot in the target machine.
-* **Cascading Configurations:** Dynamic linkage between Target Machine and Recipe selections based on real-time equipment availability.
+* **Strict Process Interlock:** Hard-coded mismatch prevention ensures wafers are only dispatched to compatible equipment. Custom HTML5 warning modals intercept illegal operations (e.g., routing BAKE wafers to SEM machines).
+* **Persistent WIP Attributes:** Wafer priority (Normal/Urgent/Critical) and required experiments are immutably tracked. Even during an Emergency Unload or machine fault, wafers returned to the queue retain their original metadata.
 
 ### 4. FSM-Based Machine Management
 * **Finite State Machine (FSM):** Strict state transition logic handling `IDLE`, `PROCESSING`, `ALARM`, and `MAINTENANCE` states.
 * **State Memory Preservation:** Simulating real-world scenarios, machines entering `ALARM` or `MAINTENANCE` mode safely preserve their internal loaded wafers, automatically resuming `PROCESSING` status once resolved.
-* **Preventive Maintenance (PM):** Dedicated maintenance toggles to securely lock machines out of the dispatching queue during PM cycles.
+* **Exception Handling:** Built-in Emergency Unload mechanics allowing Lab Operators to decisively Scrap (discard) or Reuse (return to WIP) wafers when a process is forcibly aborted.
 
 ### 5. Advanced Capacity Analytics
 * **Time-Series Visualization:** Integration with Chart.js to render dynamically calculated utilization metrics based on real-time loaded capacity.
@@ -43,7 +44,6 @@ In semiconductor R&D and manufacturing, quality control relies heavily on specia
 ### 6. Enterprise UI & Security Control
 * **Role-Based Access Control (RBAC):** UI dynamically adapts to primary roles (System Admin, Lab Supervisor, Lab Operator, Machine Owner, Fab User), strictly restricting navigation and management models.
 * **Responsive Design:** Mobile-first architecture featuring collapsible sidebars and off-canvas layouts for cross-device accessibility.
-* **Data Sanitization:** SAP-standard automated formatting for user profile contact fields.
 
 ## Technology Stack
 
@@ -58,4 +58,4 @@ This is a pure frontend architecture designed with zero-build-step principles. N
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/jasper-nycu/LIMS.git](https://github.com/jasper-nycu/LIMS.git)
+   git clone https://github.com/jasper-nycu/LIMS-Prototype.git
